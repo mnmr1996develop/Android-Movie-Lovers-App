@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.authentication.logout.LogoutHandler
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +26,7 @@ class SecurityConfig(
     private val passwordEncoder: PasswordEncoder,
     private val enthusiastService: EnthusiastService,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val logoutHandler: LogoutHandler
 ) {
 
     @Bean
@@ -48,5 +50,10 @@ class SecurityConfig(
                 .anyRequest().authenticated()
         }
         .authenticationProvider(authenticationProvider()).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+        .logout { logout ->
+            logout.addLogoutHandler(logoutHandler)
+                .logoutSuccessHandler { request, response, authentication -> SecurityContextHolder.clearContext() }
+                .logoutUrl("/api/v1/auth/logout")
+        }
         .build()
 }

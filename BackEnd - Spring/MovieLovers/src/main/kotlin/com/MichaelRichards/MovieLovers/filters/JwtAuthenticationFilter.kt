@@ -1,5 +1,6 @@
 package com.MichaelRichards.MovieLovers.filters
 
+import com.MichaelRichards.MovieLovers.repositories.TokenRepository
 import com.MichaelRichards.MovieLovers.services.EnthusiastService
 import com.MichaelRichards.MovieLovers.services.JwtService
 import jakarta.servlet.FilterChain
@@ -16,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 class JwtAuthenticationFilter (
     private val jwtService: JwtService,
     private val enthusiastService: EnthusiastService,
+    private val tokenRepository: TokenRepository
 ): OncePerRequestFilter(){
 
     override fun doFilterInternal(
@@ -31,7 +33,14 @@ class JwtAuthenticationFilter (
         val jwt: String = authHeader.substring(7)
         val username: String = jwtService.extractUsername(jwt)
 
-        if (username.isNotEmpty() && SecurityContextHolder.getContext().authentication == null) {
+        val token = tokenRepository.findByToken(jwt)
+
+        if (token == null){
+            filterChain.doFilter(request, response)
+            return
+        }
+
+        if (username.isNotEmpty() && (SecurityContextHolder.getContext().authentication == null) && token.isValid()) {
             val userDetails = enthusiastService.loadUserByUsername(username)
             if (jwtService.isTokenValid(jwt, userDetails)) run {
                 val context: SecurityContext = SecurityContextHolder.createEmptyContext()
