@@ -15,18 +15,21 @@ import java.net.URI
 
 @RestController
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-@RequestMapping("api/v1/admins/")
+@RequestMapping("/api/v1/admins")
 class AdminController (
     private val enthusiastService: EnthusiastService,
     private val authenticationService: AuthenticationService
 ){
 
     companion object{
-        private const val BASE_PATH =  "api/v1/admins/"
+        private const val BASE_PATH =  "/api/v1/admins"
     }
 
-    @GetMapping("users/")
+    @GetMapping("/users")
     fun getAllUsers(): ResponseEntity<List<Enthusiast>> = ResponseEntity.ok(enthusiastService.getAllUsers())
+
+    @GetMapping("/users/{username}")
+    fun getUserByUsername(@PathVariable username: String): ResponseEntity<Enthusiast> = ResponseEntity.ok(enthusiastService.findByUsername(username))
 
     @PostMapping
     fun registerAdmin(@RequestBody signUpRequest: SignUpRequest): ResponseEntity<JwtAuthenticationResponse> {

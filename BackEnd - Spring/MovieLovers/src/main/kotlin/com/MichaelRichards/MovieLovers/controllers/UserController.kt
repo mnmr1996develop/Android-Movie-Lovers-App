@@ -14,6 +14,10 @@ class UserController(
     private val enthusiastService: EnthusiastService,
 ) {
 
+    companion object{
+        private const val BASE_PATH =  "api/v1/users"
+    }
+
     @GetMapping
     fun getUserDetails(@RequestHeader("Authorization") bearerToken: String): ResponseEntity<Enthusiast>{
         val enthusiast = enthusiastService.getUserByBearerToken(bearerToken)

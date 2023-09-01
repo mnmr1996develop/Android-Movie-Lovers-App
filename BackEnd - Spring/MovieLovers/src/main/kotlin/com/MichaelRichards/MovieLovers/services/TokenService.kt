@@ -14,5 +14,5 @@ class TokenService(
 
     fun saveToken(token: Token) = tokenRepository.save(token)
     fun findAllValidTokensByUser(id: UUID) = tokenRepository.findAllValidTokensByUser(id)
-    fun saveAll(tokens: MutableList<Token>) = tokenRepository.saveAll(tokens.asIterable())
+    fun saveAll(tokens: MutableList<Token>): MutableList<Token> = tokenRepository.saveAll(tokens.asIterable())
 }
