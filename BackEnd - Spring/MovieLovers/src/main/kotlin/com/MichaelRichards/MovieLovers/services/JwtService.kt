@@ -22,8 +22,6 @@ class JwtService {
     fun extractUsername(token: String): String {
         return extractClaim(token) { obj: Claims -> obj.subject }
     }
-
-    fun generateToken(userDetails: UserDetails): String = generateToken(mutableMapOf(), userDetails)
     fun generateRefreshToken(userDetails: UserDetails): String = buildToken(mutableMapOf(), userDetails, JWT_REFRESH_EXPIRATION)
 
 
@@ -42,7 +40,7 @@ class JwtService {
         return claimsResolvers.apply(claims)
     }
 
-    private fun generateToken(extraClaims: Map<String, Any>, userDetails: UserDetails): String = buildToken(extraClaims, userDetails, JWT_EXPIRATION)
+    fun generateToken(extraClaims: Map<String, Any> = mutableMapOf(), userDetails: UserDetails): String = buildToken(extraClaims, userDetails, JWT_EXPIRATION)
 
 
     private fun buildToken(extraClaims: Map<String, Any>, userDetails: UserDetails, expiration: Long) = Jwts
