@@ -14,12 +14,12 @@ import javax.inject.Inject
 private const val TAG = "LoginViewModel"
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: UserRepository,
 ): ViewModel() {
 
     fun loginWithUsernameAndPassword(username: String, password: String, navController: NavController) = viewModelScope.launch {
         try {
-            if (username == "admin" && password == "admin"){
+            if (repository.login(username, password)){
                 navController.navigate(Screens.MainGraph.route){
                     popUpTo(Screens.AuthGraph.route){
                         inclusive = true
@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }catch (e: Exception){
-            Log.i(TAG, "loginWithUsernameAndPassword: $username and $password invalid")
+            Log.i(TAG, "loginWithUsernameAndPassword: ${e.message}")
         }
     }
     

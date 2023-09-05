@@ -43,7 +43,6 @@ import com.michaelrichards.movieloversapp.components.Logo
 import com.michaelrichards.movieloversapp.ui.theme.backgroundColor
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,

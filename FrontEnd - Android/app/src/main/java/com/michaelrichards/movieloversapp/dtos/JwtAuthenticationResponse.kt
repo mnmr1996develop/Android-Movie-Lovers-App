@@ -1,4 +1,4 @@
-package com.michaelrichards.movieloversapp.model
+package com.michaelrichards.movieloversapp.dtos
 
 data class JwtAuthenticationResponse(
     val accessToken: String

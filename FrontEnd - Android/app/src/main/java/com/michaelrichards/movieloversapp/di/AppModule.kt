@@ -1,5 +1,6 @@
 package com.michaelrichards.movieloversapp.di
 
+import com.google.gson.Gson
 import com.michaelrichards.movieloversapp.network.UserAPI
 import com.michaelrichards.movieloversapp.repositories.implementaions.UserRepositoryImpl
 import com.michaelrichards.movieloversapp.repositories.interfaces.UserRepository
@@ -9,6 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -20,6 +22,7 @@ object AppModule {
     fun provideUserAPI(): UserAPI {
         return Retrofit.Builder()
             .baseUrl(Constants.SITE_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(Gson()))
             .build()
             .create(UserAPI::class.java)
     }
