@@ -1,4 +1,4 @@
-package com.michaelrichards.movieloversapp.screens.components
+package com.michaelrichards.movieloversapp.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable

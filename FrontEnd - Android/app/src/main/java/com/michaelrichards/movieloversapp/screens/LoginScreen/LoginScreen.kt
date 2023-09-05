@@ -33,12 +33,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.R
 import com.michaelrichards.movieloversapp.navigation.Screens
-import com.michaelrichards.movieloversapp.screens.components.AuthInputFields
-import com.michaelrichards.movieloversapp.screens.components.Logo
+import com.michaelrichards.movieloversapp.components.AuthInputFields
+import com.michaelrichards.movieloversapp.components.Logo
 import com.michaelrichards.movieloversapp.ui.theme.backgroundColor
 
 
@@ -47,7 +48,7 @@ import com.michaelrichards.movieloversapp.ui.theme.backgroundColor
 fun LoginScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    loginViewModel: LoginViewModel = viewModel()
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
 
     val username = remember {
@@ -80,7 +81,9 @@ fun LoginScreen(
                 modifier = Modifier.size(250.dp)
             )
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 30.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 30.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

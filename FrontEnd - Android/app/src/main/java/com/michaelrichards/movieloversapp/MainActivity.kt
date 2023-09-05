@@ -16,7 +16,9 @@ import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.navigation.UserNavigation
 import com.michaelrichards.movieloversapp.screens.LoginScreen.LoginScreen
 import com.michaelrichards.movieloversapp.ui.theme.MovieLoversAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

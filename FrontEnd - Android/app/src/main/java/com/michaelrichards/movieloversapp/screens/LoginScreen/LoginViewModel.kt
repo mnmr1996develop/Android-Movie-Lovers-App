@@ -5,12 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.navigation.Screens
+import com.michaelrichards.movieloversapp.repositories.interfaces.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.lang.Exception
+import javax.inject.Inject
 
 private const val TAG = "LoginViewModel"
-private const val BASE_PATH = "http://localhost:8080/"
-class LoginViewModel(): ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val repository: UserRepository
+): ViewModel() {
 
     fun loginWithUsernameAndPassword(username: String, password: String, navController: NavController) = viewModelScope.launch {
         try {
