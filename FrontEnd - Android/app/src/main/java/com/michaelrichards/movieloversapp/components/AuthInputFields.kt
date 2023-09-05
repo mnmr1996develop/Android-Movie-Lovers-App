@@ -38,8 +38,7 @@ fun AuthInputFields(
         value = valueState.value,
         onValueChange = { valueState.value = it.trim() },
         modifier = modifier
-            .fillMaxWidth()
-            .padding(15.dp),
+            .fillMaxWidth(),
         label = { Text(text = label) },
         keyboardActions = onAction,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
