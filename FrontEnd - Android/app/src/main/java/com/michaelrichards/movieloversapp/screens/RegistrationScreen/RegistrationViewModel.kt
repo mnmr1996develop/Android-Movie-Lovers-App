@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.dtos.SignUpRequest
-import com.michaelrichards.movieloversapp.navigation.Screens
-import com.michaelrichards.movieloversapp.repositories.interfaces.UserRepository
+import com.michaelrichards.movieloversapp.navigation.Graphs
+import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -17,7 +17,7 @@ private const val TAG = "RegistrationViewModel"
 
 @HiltViewModel
 class RegistrationViewModel @Inject constructor(
-    private val repository: UserRepository
+    private val repository: AuthRepository
 ) : ViewModel () {
 
     fun register(
@@ -33,8 +33,8 @@ class RegistrationViewModel @Inject constructor(
         println(request)
         try {
             if (repository.register(signUpRequest = request)){
-                navController.navigate(Screens.MainGraph.route){
-                    popUpTo(Screens.AuthGraph.route){
+                navController.navigate(Graphs.MainGraph.routeName){
+                    popUpTo(Graphs.AuthGraph.routeName){
                         inclusive = true
                     }
                 }

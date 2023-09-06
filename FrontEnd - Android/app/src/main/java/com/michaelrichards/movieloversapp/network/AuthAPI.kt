@@ -8,11 +8,14 @@ import retrofit2.http.POST
 import javax.inject.Singleton
 
 @Singleton
-interface UserAPI {
+interface AuthAPI {
 
     @POST("auth/login")
     suspend fun login(@Body request: SignInRequest): JwtAuthenticationResponse?
 
     @POST("auth/signup")
     suspend fun register(@Body request: SignUpRequest) : JwtAuthenticationResponse?
+
+    @POST("auth/logout")
+    suspend fun logout()
 }

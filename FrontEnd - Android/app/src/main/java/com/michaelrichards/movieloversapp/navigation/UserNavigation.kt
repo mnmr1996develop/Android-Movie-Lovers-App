@@ -1,5 +1,7 @@
 package com.michaelrichards.movieloversapp.navigation
 
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,9 +15,20 @@ import com.michaelrichards.movieloversapp.screens.RegistrationScreen.Registratio
 fun UserNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screens.AuthGraph.route){
+    NavHost(navController = navController, startDestination = Graphs.AuthGraph.routeName){
 
-        navigation(route = Screens.AuthGraph.route, startDestination = Screens.LoginScreen.route){
+        navigation(route= Graphs.StartGraph.routeName, startDestination = Screens.SplashScreen.route){
+            composable(route = Screens.SplashScreen.route){
+                @Composable
+                fun SplashScreen() {
+                    Surface {
+                        Text(text = "Splash Screen")
+                    }
+                }
+            }
+        }
+
+        navigation(route = Graphs.AuthGraph.routeName, startDestination = Screens.LoginScreen.route){
             composable(route = Screens.LoginScreen.route){
                     LoginScreen(navController = navController)
             }
@@ -23,7 +36,7 @@ fun UserNavigation() {
                     RegistrationScreen(navController = navController)
             }
         }
-        navigation(route = Screens.MainGraph.route, startDestination = Screens.HomeScreen.route){
+        navigation(route = Graphs.MainGraph.routeName, startDestination = Screens.HomeScreen.route){
                 composable(route = Screens.HomeScreen.route){
                     HomeScreen(navController = navController)
                 }
