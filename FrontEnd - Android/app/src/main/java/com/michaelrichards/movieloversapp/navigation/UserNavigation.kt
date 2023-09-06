@@ -10,12 +10,13 @@ import androidx.navigation.navigation
 import com.michaelrichards.movieloversapp.screens.HomeScreen.HomeScreen
 import com.michaelrichards.movieloversapp.screens.LoginScreen.LoginScreen
 import com.michaelrichards.movieloversapp.screens.RegistrationScreen.RegistrationScreen
+import com.michaelrichards.movieloversapp.screens.SearchScreen.SearchScreen
 
 @Composable
 fun UserNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Graphs.AuthGraph.routeName){
+    NavHost(navController = navController, startDestination = Graphs.MainGraph.routeName){
 
         navigation(route= Graphs.StartGraph.routeName, startDestination = Screens.SplashScreen.route){
             composable(route = Screens.SplashScreen.route){
@@ -39,6 +40,10 @@ fun UserNavigation() {
         navigation(route = Graphs.MainGraph.routeName, startDestination = Screens.HomeScreen.route){
                 composable(route = Screens.HomeScreen.route){
                     HomeScreen(navController = navController)
+                }
+                
+                composable(route = Screens.SearchScreen.route){
+                    SearchScreen(navController = navController)
                 }
 
         }

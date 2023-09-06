@@ -12,4 +12,6 @@
     <string name="site_logo">Site Logo</string>
     <string name="show_password">Show Password</string>
     <string name="hide_password">Hide password</string>
+    <string name="search_for_movie">Search For Movie</string>
+    <string name="movie_name">Movie of Movie</string>
 </resources>

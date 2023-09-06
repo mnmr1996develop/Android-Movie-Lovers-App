@@ -14,13 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.michaelrichards.movieloversapp.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     Scaffold(
         topBar = {
-            topAppBar(navController)
+            TopBar(navController = navController)
         },
         bottomBar = {
             BottomAppBar(
@@ -45,17 +46,4 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun prevHomeScreen() {
     HomeScreen(navController = NavController(LocalContext.current))
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun topAppBar(navController: NavController) {
-    TopAppBar(
-        title = {
-            Text(text = "Top App Bar")
-        },
-        navigationIcon = { Text(
-            text = "Logout"
-        )}
-    )
 }
