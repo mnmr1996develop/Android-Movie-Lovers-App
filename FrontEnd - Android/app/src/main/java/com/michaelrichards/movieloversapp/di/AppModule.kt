@@ -1,5 +1,8 @@
 package com.michaelrichards.movieloversapp.di
 
+import android.app.Application
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.michaelrichards.movieloversapp.network.AuthAPI
 import com.michaelrichards.movieloversapp.repositories.implementaions.AuthRepositoryImpl
@@ -29,5 +32,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthRepository(api: AuthAPI): AuthRepository = AuthRepositoryImpl(api)
+    fun provideSharedPreferences(app: Application): SharedPreferences = app.getSharedPreferences("prefs", MODE_PRIVATE)
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(api: AuthAPI, prefs: SharedPreferences): AuthRepository = AuthRepositoryImpl(api, prefs)
 }

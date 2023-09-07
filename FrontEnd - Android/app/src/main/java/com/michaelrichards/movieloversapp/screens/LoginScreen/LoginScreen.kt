@@ -1,5 +1,6 @@
 package com.michaelrichards.movieloversapp.screens.LoginScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +49,13 @@ import com.michaelrichards.movieloversapp.R
 import com.michaelrichards.movieloversapp.navigation.Screens
 import com.michaelrichards.movieloversapp.components.AuthInputFields
 import com.michaelrichards.movieloversapp.components.Logo
+import com.michaelrichards.movieloversapp.data.State
+import com.michaelrichards.movieloversapp.navigation.Graphs
+import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
 import com.michaelrichards.movieloversapp.ui.theme.backgroundColor
+import kotlinx.coroutines.Delay
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 
 
 @Composable
@@ -55,6 +64,33 @@ fun LoginScreen(
     navController: NavController,
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
+
+    val state = loginViewModel.state
+    val context = LocalContext.current
+    LaunchedEffect(loginViewModel, context) {
+        loginViewModel.authResults.collect { res ->
+            when (res) {
+                is AuthResult.Authorized -> {
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                    delay(Toast.LENGTH_LONG.toLong())
+                    navController.navigate(Graphs.MainGraph.routeName) {
+                        popUpTo(Graphs.AuthGraph.routeName) {
+                            inclusive = true
+                        }
+                    }
+                }
+
+                is AuthResult.UnAuthorized -> {
+                    Toast.makeText(context, "Bad Credentials", Toast.LENGTH_SHORT).show()
+                }
+
+                is AuthResult.UnknownError -> {
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 
     val username = remember {
         mutableStateOf("")
@@ -72,6 +108,33 @@ fun LoginScreen(
         mutableStateOf(false)
     }
 
+    if (state.loading){
+        BigCircularIndicator()
+    }else {
+        loginMainBody(
+            modifier,
+            username,
+            password,
+            passwordVisible,
+            loginError,
+            state,
+            loginViewModel,
+            navController
+        )
+    }
+}
+
+@Composable
+private fun loginMainBody(
+    modifier: Modifier,
+    username: MutableState<String>,
+    password: MutableState<String>,
+    passwordVisible: MutableState<Boolean>,
+    loginError: MutableState<Boolean>,
+    state: State,
+    loginViewModel: LoginViewModel,
+    navController: NavController
+) {
     Surface(
         modifier = modifier
             .fillMaxSize(),
@@ -83,7 +146,9 @@ fun LoginScreen(
         ) {
 
             Logo(
-                modifier = Modifier.weight(5f).padding(8.dp)
+                modifier = Modifier
+                    .weight(5f)
+                    .padding(8.dp)
             )
             Column(
                 modifier = Modifier
@@ -125,13 +190,21 @@ fun LoginScreen(
                         )
                     },
                     isError = loginError.value,
-                    onAction = KeyboardActions(onGo = {login(loginViewModel, username, password, navController)})
+                    onAction = KeyboardActions(onGo = {
+                        if (!state.loading) {
+                            login(
+                                loginViewModel,
+                                username,
+                                password
+                            )
+                        }
+                    })
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        login(loginViewModel, username, password, navController)
+                        login(loginViewModel, username, password)
                     }
                 ) {
                     Text(
@@ -156,15 +229,17 @@ fun LoginScreen(
             }
         }
     }
-
 }
 
-private fun login(loginViewModel: LoginViewModel, username: MutableState<String>, password: MutableState<String>, navController: NavController){
+private fun login(
+    loginViewModel: LoginViewModel,
+    username: MutableState<String>,
+    password: MutableState<String>
+) {
     loginViewModel
         .loginWithUsernameAndPassword(
             username = username.value,
-            password = password.value,
-            navController = navController
+            password = password.value
         )
 }
 
@@ -175,4 +250,11 @@ fun previewLoginScreen() {
         navController = NavController(LocalContext.current)
     )
 }
-
+@Composable
+fun BigCircularIndicator(){
+    Surface (
+        modifier = Modifier.fillMaxSize()
+    ){
+        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+    }
+}

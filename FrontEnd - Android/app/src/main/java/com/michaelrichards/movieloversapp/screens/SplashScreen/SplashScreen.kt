@@ -22,32 +22,54 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.components.Logo
 import com.michaelrichards.movieloversapp.navigation.Graphs
+import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 
 
 @Composable
-fun SplashScreen(navController: NavController) {
-
+fun SplashScreen(
+    navController: NavController,
+    viewModel: SplashScreenViewModel = hiltViewModel()
+) {
      val scale = remember {
          Animatable(0f)
      }
-    LaunchedEffect(key1 = true) {
-     scale.animateTo(
+    val context = LocalContext.current
+    LaunchedEffect(viewModel, context){
+        scale.animateTo(
             targetValue = 0.9f,
             animationSpec = tween(
                 durationMillis = 800,
                 easing = { OvershootInterpolator(8f).getInterpolation(it) })
         )
-        delay(2000L)
-        navController.navigate(Graphs.AuthGraph.routeName){
-            popUpTo(Graphs.StartGraph.routeName){
-                inclusive = true
+        viewModel.authResults.collect{res ->
+            when(res){
+                is AuthResult.Authorized -> {
+                    navController.navigate(Graphs.MainGraph.routeName){
+                        popUpTo(Graphs.StartGraph.routeName){
+                            inclusive = true
+                        }
+                    }
+                }
+                else -> {
+                    navController.navigate(Graphs.AuthGraph.routeName){
+                        popUpTo(Graphs.StartGraph.routeName){
+                            inclusive = true
+                        }
+                    }
+                }
             }
         }
+
     }
+
+
 
     Column(modifier = Modifier
         .fillMaxWidth()
