@@ -5,13 +5,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -71,19 +77,20 @@ fun LoginScreen(
             .fillMaxSize(),
         color = backgroundColor
     ) {
-        Column (
+        Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Logo(
-                modifier = Modifier.size(250.dp)
+                modifier = Modifier.weight(5f).padding(8.dp)
             )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 30.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
-                verticalArrangement = Arrangement.Top,
+                    .padding(20.dp)
+                    .weight(11f),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AuthInputFields(
@@ -100,7 +107,7 @@ fun LoginScreen(
                         )
                     },
                 )
-
+                Spacer(modifier = Modifier.height(8.dp))
                 AuthInputFields(
                     valueState = password,
                     label = "Password",
@@ -117,31 +124,48 @@ fun LoginScreen(
                             tint = Color.White
                         )
                     },
-                    isError = loginError.value
+                    isError = loginError.value,
+                    onAction = KeyboardActions(onGo = {login(loginViewModel, username, password, navController)})
                 )
-
+                Spacer(modifier = Modifier.height(8.dp))
                 Button(
+                    modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        loginViewModel
-                            .loginWithUsernameAndPassword(
-                                username = username.value,
-                                password = password.value,
-                                navController = navController
-                            )
+                        login(loginViewModel, username, password, navController)
                     }
                 ) {
-                    Text(text = stringResource(id = R.string.login))
+                    Text(
+                        text = stringResource(id = R.string.login),
+                        style = MaterialTheme.typography.headlineSmall.copy(fontFamily = FontFamily.Cursive)
+                    )
                 }
+            }
+            Column(
+                modifier = Modifier
+                    .weight(4f)
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.Bottom
+            ) {
 
-                Text(text = "or")
-
-                Button(onClick = { navController.navigate(Screens.RegistrationScreen.route) }) {
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { navController.navigate(Screens.RegistrationScreen.route) }
+                ) {
                     Text(text = stringResource(id = R.string.sign_up))
                 }
             }
         }
     }
 
+}
+
+private fun login(loginViewModel: LoginViewModel, username: MutableState<String>, password: MutableState<String>, navController: NavController){
+    loginViewModel
+        .loginWithUsernameAndPassword(
+            username = username.value,
+            password = password.value,
+            navController = navController
+        )
 }
 
 @Preview

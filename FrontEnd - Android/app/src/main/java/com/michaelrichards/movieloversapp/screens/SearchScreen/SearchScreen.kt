@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.R
+import com.michaelrichards.movieloversapp.components.SearchResults
 import com.michaelrichards.movieloversapp.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,8 +72,8 @@ fun SearchBody(
                 singleLine = true
             )
         }
-        LazyColumn {
-
+        Column {
+            SearchResults()
         }
     }
 }

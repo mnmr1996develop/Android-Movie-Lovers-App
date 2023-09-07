@@ -11,21 +11,17 @@ import com.michaelrichards.movieloversapp.screens.HomeScreen.HomeScreen
 import com.michaelrichards.movieloversapp.screens.LoginScreen.LoginScreen
 import com.michaelrichards.movieloversapp.screens.RegistrationScreen.RegistrationScreen
 import com.michaelrichards.movieloversapp.screens.SearchScreen.SearchScreen
+import com.michaelrichards.movieloversapp.screens.SplashScreen.SplashScreen
 
 @Composable
 fun UserNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Graphs.MainGraph.routeName){
+    NavHost(navController = navController, startDestination = Graphs.StartGraph.routeName){
 
         navigation(route= Graphs.StartGraph.routeName, startDestination = Screens.SplashScreen.route){
             composable(route = Screens.SplashScreen.route){
-                @Composable
-                fun SplashScreen() {
-                    Surface {
-                        Text(text = "Splash Screen")
-                    }
-                }
+               SplashScreen(navController = navController)
             }
         }
 

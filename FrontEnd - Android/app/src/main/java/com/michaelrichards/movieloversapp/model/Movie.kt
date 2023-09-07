@@ -1,12 +1,14 @@
 package com.michaelrichards.movieloversapp.model
 
 data class Movie(
-    val imdbID: String,
-    val name: String,
-    val description: String,
-    val url: String,
-    val genre: List<String>,
-    val datePublished: String,
-    val actor: List<Actor>,
-    val director: List<Director>
+    val title: String,
+    val year: Int,
+    val imdbId: String,
+    val rank: Int,
+    val topActors: List<Actor>,
+    val aka: String,
+    val imdbUrl: String,
+    val imagePosterLink: String,
+    val photoWidth: Int,
+    val photoHeight: Int
 )
