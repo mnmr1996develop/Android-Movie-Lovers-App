@@ -48,8 +48,14 @@ class Enthusiast(
 
     var createdAt: LocalDateTime? = null,
 
-    var updatedAt: LocalDateTime? = null
+    var updatedAt: LocalDateTime? = null,
+
 ): UserDetails {
+
+    @OneToMany(mappedBy = "enthusiast", cascade = [CascadeType.ALL], orphanRemoval = true)
+    private val _movieReviews : MutableList<MovieReview> = mutableListOf()
+
+    val movieReviews get() = _movieReviews.toList()
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableSetOf(
         SimpleGrantedAuthority(role.name)

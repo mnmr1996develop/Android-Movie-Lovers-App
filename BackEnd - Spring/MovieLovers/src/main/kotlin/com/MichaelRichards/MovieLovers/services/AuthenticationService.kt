@@ -6,6 +6,10 @@ import com.MichaelRichards.MovieLovers.dtos.SignUpRequest
 import com.MichaelRichards.MovieLovers.models.Enthusiast
 import com.MichaelRichards.MovieLovers.models.Role
 import com.MichaelRichards.MovieLovers.models.Token
+import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -28,8 +32,8 @@ class AuthenticationService(
             )
         )
         val user = enthusiastService.findByUsername(request.username)
-        val jwtToken = saveUserToken(user)
-        return JwtAuthenticationResponse(accessToken = jwtToken)
+        val (jwtToken, jwtRefresh) = saveUserToken(user)
+        return JwtAuthenticationResponse(accessToken = jwtToken, refreshToken = jwtRefresh)
     }
 
 
@@ -44,19 +48,29 @@ class AuthenticationService(
             role = role
         )
         val user = enthusiastService.save(newUser)
-        val jwtToken = saveUserToken(user)
-        return JwtAuthenticationResponse(accessToken = jwtToken)
+        val (jwtToken, jwtRefresh) = saveUserToken(user)
+        return JwtAuthenticationResponse(accessToken = jwtToken, refreshToken = jwtRefresh)
     }
 
-    private fun saveUserToken(enthusiast: Enthusiast) : String{
+    private fun saveUserToken(enthusiast: Enthusiast) : Pair<String, String>{
         revokeAllUserTokens(enthusiast)
         val jwtToken = jwtService.generateToken(userDetails = enthusiast)
+        val jwtRefreshToken = jwtService.generateRefreshToken(enthusiast)
         val token = Token(
             enthusiast = enthusiast,
             token = jwtToken
         )
        tokenService.saveToken(token)
-        return jwtToken
+        return Pair(jwtToken, jwtRefreshToken)
+    }
+
+    private fun saveUserTokenWithoutRefresh(enthusiast: Enthusiast, jwtToken: String){
+        revokeAllUserTokens(enthusiast)
+        val token = Token(
+            enthusiast = enthusiast,
+            token = jwtToken
+        )
+        tokenService.saveToken(token)
     }
 
     private fun revokeAllUserTokens(enthusiast: Enthusiast){
@@ -71,4 +85,27 @@ class AuthenticationService(
         }
 
     }
+
+    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse){
+        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
+        if (authHeader.isNullOrEmpty() || !authHeader.startsWith("Bearer ")) {
+            return
+        }
+        val refreshToken: String = authHeader.substring(7)
+        val username: String = jwtService.extractUsername(refreshToken)
+
+        if (username.isNotEmpty()) {
+            val userDetails = enthusiastService.findByUsername(username)
+            if (jwtService.isTokenValid(refreshToken, userDetails)) run {
+                val accessToken = jwtService.generateToken(userDetails = userDetails)
+                saveUserTokenWithoutRefresh(userDetails, accessToken)
+                val authResponse = JwtAuthenticationResponse(
+                    accessToken = accessToken,
+                    refreshToken = refreshToken
+                )
+                val mapper = ObjectMapper().writeValue(response.outputStream, authResponse)
+            }
+        }
+    }
+
 }

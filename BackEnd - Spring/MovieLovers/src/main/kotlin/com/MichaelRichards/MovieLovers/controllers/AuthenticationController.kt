@@ -4,6 +4,8 @@ import com.MichaelRichards.MovieLovers.dtos.JwtAuthenticationResponse
 import com.MichaelRichards.MovieLovers.dtos.SignInRequest
 import com.MichaelRichards.MovieLovers.dtos.SignUpRequest
 import com.MichaelRichards.MovieLovers.services.AuthenticationService
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,5 +31,10 @@ class AuthenticationController(private val authenticationService: Authentication
     @PostMapping("/login")
     fun login(@RequestBody request: SignInRequest): ResponseEntity<JwtAuthenticationResponse> {
         return ResponseEntity.ok().body(authenticationService.login(request))
+    }
+
+    @PostMapping("/refresh-token")
+    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse){
+            authenticationService.refreshToken(request, response)
     }
 }
