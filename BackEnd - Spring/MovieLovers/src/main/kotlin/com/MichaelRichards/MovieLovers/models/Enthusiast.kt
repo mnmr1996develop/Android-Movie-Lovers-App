@@ -85,4 +85,8 @@ class Enthusiast(
     fun addReview(movieReview: MovieReview){
         _movieReviews.add(movieReview)
     }
+
+    fun deleteReview(movieReview: MovieReview) {
+        _movieReviews.remove(movieReview)
+    }
 }

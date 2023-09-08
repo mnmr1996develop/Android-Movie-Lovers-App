@@ -103,4 +103,33 @@ class ApiExceptionHandler {
         }
         return ResponseEntity(apiException, badRequest)
     }
+
+    @ExceptionHandler(value = [CustomExceptions.DuplicateReviewException::class])
+    fun handleApiRequestException(exception: CustomExceptions.DuplicateReviewException): ResponseEntity<Any> {
+        val badRequest = HttpStatus.BAD_REQUEST
+
+        val apiException = exception.message?.let {
+            APIException(
+                badRequest,
+                it,
+                "DUPLICATE_REVIEW",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity(apiException, badRequest)
+    }
+
+    @ExceptionHandler(value = [CustomExceptions.InvalidReview::class])
+    fun handleApiRequestException(exception: CustomExceptions.InvalidReview): ResponseEntity<Any> {
+        val badRequest = HttpStatus.NOT_FOUND
+        val apiException = exception.message?.let {
+            APIException(
+                badRequest,
+                it,
+                "DUPLICATE_REVIEW",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity(apiException, badRequest)
+    }
 }

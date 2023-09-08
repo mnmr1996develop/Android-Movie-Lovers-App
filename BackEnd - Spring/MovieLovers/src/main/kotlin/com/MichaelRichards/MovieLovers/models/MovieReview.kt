@@ -17,13 +17,13 @@ class MovieReview (
 
     @Min(0)
     @Max(10)
-    val rating: Int,
+    var rating: Float,
 
-    val description: String,
+    var description: String,
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    val lastUpdated: LocalDateTime = LocalDateTime.now(),
+    var lastUpdated: LocalDateTime = LocalDateTime.now(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enthusiast_id")
