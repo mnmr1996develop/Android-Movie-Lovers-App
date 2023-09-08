@@ -19,12 +19,12 @@ class EnthusiastService(
         username?.let { enthusiastRepository.findByUsername(it) }
             ?: throw UsernameNotFoundException("$username not found")
 
-    fun save(newUser: Enthusiast): Enthusiast {
-        if (newUser.id == null) {
-            newUser.createdAt = LocalDateTime.now()
+    fun save(user: Enthusiast): Enthusiast {
+        if (user.id == null) {
+            user.createdAt = LocalDateTime.now()
         }
-        newUser.updatedAt = LocalDateTime.now()
-        return enthusiastRepository.save(newUser)
+        user.updatedAt = LocalDateTime.now()
+        return enthusiastRepository.save(user)
     }
 
     fun findByUsername(username: String): Enthusiast = enthusiastRepository.findByUsername(username) ?: throw UsernameNotFoundException("$username not found")

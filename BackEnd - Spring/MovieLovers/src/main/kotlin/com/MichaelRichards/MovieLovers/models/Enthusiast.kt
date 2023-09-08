@@ -52,6 +52,7 @@ class Enthusiast(
 
 ): UserDetails {
 
+    @JsonIgnore
     @OneToMany(mappedBy = "enthusiast", cascade = [CascadeType.ALL], orphanRemoval = true)
     private val _movieReviews : MutableList<MovieReview> = mutableListOf()
 
@@ -80,4 +81,8 @@ class Enthusiast(
 
     @JsonIgnore
     override fun isEnabled(): Boolean = true
+
+    fun addReview(movieReview: MovieReview){
+        _movieReviews.add(movieReview)
+    }
 }
