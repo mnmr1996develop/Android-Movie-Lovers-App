@@ -1,5 +1,6 @@
 package com.michaelrichards.movieloversapp.components
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,17 +22,44 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.R
+import com.michaelrichards.movieloversapp.navigation.Graphs
 import com.michaelrichards.movieloversapp.navigation.Screens
+import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     title: String = "Michael Richards",
     navController: NavController,
-    showSearchBar: Boolean = true
+    showSearchBar: Boolean = true,
+    logoutViewModel: LogoutViewModel = hiltViewModel()
 ) {
+
+    val context = LocalContext.current
+    LaunchedEffect(logoutViewModel, context){
+        logoutViewModel.authResults.collect { res ->
+            when (res) {
+                is AuthResult.UnAuthorized -> {
+                    Toast.makeText(context, "Logout Successful", Toast.LENGTH_SHORT).show()
+                    delay(Toast.LENGTH_LONG.toLong())
+                    navController.navigate(Graphs.AuthGraph.routeName) {
+                        popUpTo(Graphs.MainGraph.routeName) {
+                            inclusive = true
+                        }
+                    }
+                }
+                else -> {
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     TopAppBar(title = {
         Row(
             modifier = Modifier
@@ -76,6 +105,19 @@ fun TopBar(
                     )
                 }
 
+            }
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .clickable {
+                                   logoutViewModel.logout()
+                        },
+                    painter = painterResource(id = R.drawable.search),
+                    contentDescription = "Go to search page",
+                )
             }
         }
     }

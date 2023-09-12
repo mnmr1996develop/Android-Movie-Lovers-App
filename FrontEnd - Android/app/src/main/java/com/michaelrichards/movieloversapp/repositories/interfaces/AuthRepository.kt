@@ -9,4 +9,6 @@ interface AuthRepository {
     suspend fun register(signUpRequest: SignUpRequest) : AuthResult<Unit>
 
     suspend fun authenticate() : AuthResult<Unit>
+
+    suspend fun logout(): AuthResult<Unit>
 }

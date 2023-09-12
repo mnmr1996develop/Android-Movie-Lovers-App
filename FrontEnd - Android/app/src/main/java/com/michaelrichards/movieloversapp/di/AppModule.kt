@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.michaelrichards.movieloversapp.network.AuthAPI
+import com.michaelrichards.movieloversapp.network.UserDataAPI
 import com.michaelrichards.movieloversapp.repositories.implementaions.AuthRepositoryImpl
 import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
 import com.michaelrichards.movieloversapp.utils.Constants
@@ -30,6 +31,7 @@ object AppModule {
             .create(AuthAPI::class.java)
     }
 
+
     @Provides
     @Singleton
     fun provideSharedPreferences(app: Application): SharedPreferences = app.getSharedPreferences("prefs", MODE_PRIVATE)
@@ -37,4 +39,6 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(api: AuthAPI, prefs: SharedPreferences): AuthRepository = AuthRepositoryImpl(api, prefs)
+
+
 }

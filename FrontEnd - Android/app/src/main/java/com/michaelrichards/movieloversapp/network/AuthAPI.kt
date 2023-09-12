@@ -19,7 +19,7 @@ interface AuthAPI {
     suspend fun register(@Body request: SignUpRequest) : JwtAuthenticationResponse
 
     @POST("auth/logout")
-    suspend fun logout()
+    suspend fun logout(@Header("Authorization") jwtToken: String)
     @GET
     suspend fun authenticate(@Header("Authorization") token: String)
 }

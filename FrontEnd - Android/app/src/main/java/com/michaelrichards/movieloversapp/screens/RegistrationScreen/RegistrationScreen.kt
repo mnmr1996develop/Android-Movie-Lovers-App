@@ -1,9 +1,13 @@
 package com.michaelrichards.movieloversapp.screens.RegistrationScreen
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -11,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,28 +36,57 @@ import androidx.navigation.NavHostController
 import com.michaelrichards.movieloversapp.R
 import com.michaelrichards.movieloversapp.components.AuthInputFields
 import com.michaelrichards.movieloversapp.components.Logo
+import com.michaelrichards.movieloversapp.navigation.Graphs
+import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
+import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
 import com.michaelrichards.movieloversapp.ui.theme.backgroundColor
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 
 @Composable
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: RegistrationViewModel = hiltViewModel()
+   viewModel: RegistrationViewModel = hiltViewModel()
 ) {
-    
+
+    val context = LocalContext.current
+    LaunchedEffect(viewModel, context) {
+        viewModel.authResults.collect { res ->
+            when (res) {
+                is AuthResult.Authorized -> {
+                    Toast.makeText(context, "Registration Successful", Toast.LENGTH_SHORT).show()
+                    delay(Toast.LENGTH_LONG.toLong())
+                    navController.navigate(Graphs.MainGraph.routeName) {
+                        popUpTo(Graphs.AuthGraph.routeName) {
+                            inclusive = true
+                        }
+                    }
+                }
+
+                is AuthResult.UnAuthorized -> {
+                    Toast.makeText(context, "Bad Credentials", Toast.LENGTH_SHORT).show()
+                }
+
+                is AuthResult.UnknownError -> {
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
     val firstName = remember {
         mutableStateOf("")
     }
-    
+
     val lastName = remember {
         mutableStateOf("")
     }
-    
+
     val username = remember {
         mutableStateOf("")
     }
-    
+
     val password = remember {
         mutableStateOf("")
     }
@@ -60,11 +94,11 @@ fun RegistrationScreen(
     val retypedPassword = remember {
         mutableStateOf("")
     }
-    
+
     val email = remember {
         mutableStateOf("")
     }
-    
+
     val birthday = remember {
         mutableStateOf(LocalDate.now())
     }
@@ -76,23 +110,22 @@ fun RegistrationScreen(
     val passwordVisible2 = remember {
         mutableStateOf(false)
     }
-    
+
     Surface(
         modifier = modifier.fillMaxSize(),
         color = backgroundColor
     ) {
-        Column (
+        Column(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             Logo(modifier = Modifier.size(200.dp))
-            Column (
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(5.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
+                    .padding(15.dp),
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 AuthInputFields(
                     valueState = firstName,
                     label = stringResource(id = R.string.first_name),
@@ -107,7 +140,7 @@ fun RegistrationScreen(
                         )
                     },
                 )
-
+                Spacer(modifier = Modifier.height(13.dp))
                 AuthInputFields(
                     valueState = lastName,
                     label = stringResource(id = R.string.last_name),
@@ -122,7 +155,7 @@ fun RegistrationScreen(
                         )
                     },
                 )
-
+                Spacer(modifier = Modifier.height(13.dp))
                 AuthInputFields(
                     valueState = username,
                     label = stringResource(id = R.string.username),
@@ -137,7 +170,7 @@ fun RegistrationScreen(
                         )
                     },
                 )
-
+                Spacer(modifier = Modifier.height(13.dp))
                 AuthInputFields(
                     valueState = email,
                     label = stringResource(id = R.string.email),
@@ -152,7 +185,7 @@ fun RegistrationScreen(
                         )
                     },
                 )
-
+                Spacer(modifier = Modifier.height(13.dp))
                 AuthInputFields(
                     valueState = password,
                     label = stringResource(id = R.string.password),
@@ -170,7 +203,7 @@ fun RegistrationScreen(
                         )
                     }
                 )
-
+                Spacer(modifier = Modifier.height(13.dp))
                 AuthInputFields(
                     valueState = retypedPassword,
                     label = stringResource(id = R.string.re_password),
@@ -189,11 +222,29 @@ fun RegistrationScreen(
                     }
                 )
 
-                Button(onClick = { viewModel.register(firstName = firstName.value, lastName = lastName.value, username = username.value, email = email.value, password = password.value, birthday = birthday.value , navController = navController) }) {
+            }
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Bottom
+            ){
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp),
+                    onClick = {
+                        viewModel.register(
+                            firstName = firstName.value,
+                            lastName = lastName.value,
+                            username = username.value,
+                            email = email.value,
+                            password = password.value,
+                            birthday = birthday.value,
+                        )
+                    }) {
                     Text(text = stringResource(id = R.string.sign_up))
                 }
             }
-            
+
         }
     }
 }

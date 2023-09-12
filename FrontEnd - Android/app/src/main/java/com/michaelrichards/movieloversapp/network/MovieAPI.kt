@@ -4,11 +4,12 @@ import com.michaelrichards.movieloversapp.dtos.JwtAuthenticationResponse
 import com.michaelrichards.movieloversapp.dtos.SignUpRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface MovieAPI {
-    @GET("auth/login")
+    @GET
     suspend fun getMovie(): JwtAuthenticationResponse?
 
-    @GET("auth/signup")
-    suspend fun searchMovie(@Body request: SignUpRequest) : JwtAuthenticationResponse?
+    @GET
+    suspend fun searchMovies(@Query("q") query: String) : JwtAuthenticationResponse?
 }

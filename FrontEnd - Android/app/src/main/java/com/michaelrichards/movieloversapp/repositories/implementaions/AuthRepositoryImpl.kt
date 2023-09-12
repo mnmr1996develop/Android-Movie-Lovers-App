@@ -79,5 +79,22 @@ class AuthRepositoryImpl (
         }
     }
 
+    override suspend fun logout(): AuthResult<Unit> {
+        val token = prefs.getString("jwt", null)
+
+        return try {
+            if (token == null) {
+                AuthResult.UnAuthorized()
+            } else {
+                api.logout("Bearer $token")
+                prefs.edit().remove("jwt").apply()
+                AuthResult.UnAuthorized()
+            }
+        } catch (e: Exception){
+            AuthResult.UnknownError()
+        }
+
+    }
+
 
 }
