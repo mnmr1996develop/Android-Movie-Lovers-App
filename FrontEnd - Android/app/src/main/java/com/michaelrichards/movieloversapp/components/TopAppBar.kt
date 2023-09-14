@@ -115,8 +115,8 @@ fun TopBar(
                         .clickable {
                                    logoutViewModel.logout()
                         },
-                    painter = painterResource(id = R.drawable.search),
-                    contentDescription = "Go to search page",
+                    painter = painterResource(id = R.drawable.logout),
+                    contentDescription = "Logout",
                 )
             }
         }

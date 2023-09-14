@@ -9,6 +9,7 @@ import com.MichaelRichards.MovieLovers.models.Token
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.apache.coyote.http11.Constants.a
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -107,5 +108,7 @@ class AuthenticationService(
             }
         }
     }
+
+    fun authenticateToken(jwtToken: String): Boolean  = tokenService.findTokenByName(jwtToken).isValid()
 
 }

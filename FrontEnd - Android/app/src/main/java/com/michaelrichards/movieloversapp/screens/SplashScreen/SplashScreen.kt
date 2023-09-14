@@ -37,6 +37,8 @@ fun SplashScreen(
     navController: NavController,
     viewModel: SplashScreenViewModel = hiltViewModel()
 ) {
+
+
      val scale = remember {
          Animatable(0f)
      }

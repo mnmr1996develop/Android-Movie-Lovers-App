@@ -27,6 +27,7 @@ class SplashScreenViewModel @Inject constructor(
     private fun authenticate() {
         viewModelScope.launch {
             val result = repository.authenticate()
+            println(result)
             resultChannel.send(result)
         }
     }

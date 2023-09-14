@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.michaelrichards.movieloversapp.dtos.SignInRequest
 import com.michaelrichards.movieloversapp.dtos.SignUpRequest
+import com.michaelrichards.movieloversapp.model.JwtToken
 import com.michaelrichards.movieloversapp.network.AuthAPI
 import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
 import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
@@ -65,7 +66,8 @@ class AuthRepositoryImpl (
                 AuthResult.UnAuthorized()
             }
             else {
-                //api.authenticate("Bearer $token")
+                val jwtToken = JwtToken(token)
+                api.authenticate(jwtToken)
                 AuthResult.Authorized()
             }
         }catch (e: HttpException){
