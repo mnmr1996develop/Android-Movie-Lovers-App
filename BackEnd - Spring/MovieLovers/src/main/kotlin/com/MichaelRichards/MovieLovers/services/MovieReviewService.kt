@@ -15,6 +15,8 @@ class MovieReviewService (
     private val movieReviewRepository: MovieReviewRepository
 ){
 
+    fun findById(id: Long): MovieReview = movieReviewRepository.findById(id).orElseThrow { Exception("") }
+
     fun addReview(bearerToken: String, review: MovieReviewDTO) : MovieReview{
         val user = enthusiastService.getUserByBearerToken(bearerToken)
 
@@ -36,7 +38,7 @@ class MovieReviewService (
 
         enthusiastService.save(user)
 
-        return movieReviewRepository.save(movieReview)
+        return movieReview
     }
 
     fun updateReview(bearerToken: String, review: MovieReviewDTO): MovieReview{
@@ -64,14 +66,33 @@ class MovieReviewService (
 
     fun getMovieAverage(imdbName: String): Float{
         val reviews = movieReviewRepository.findByImdbId(imdbName)
+        if (reviews.isEmpty()) return 0f
+
         var cumRating = 0f
+
         for (review in reviews){
             cumRating+= review.rating
         }
-        return if (reviews.size == 0)
-             0f
-        else
-            cumRating/reviews.size
 
+        return cumRating/reviews.size
+    }
+
+    fun getMyMovieReviews(bearerToken: String): List<MovieReview> {
+        val user = enthusiastService.getUserByBearerToken(bearerToken)
+        return user.movieReviews
+    }
+
+    fun upVoteReview(bearerToken: String, movieReviewId: Long): MovieReview {
+        val user = enthusiastService.getUserByBearerToken(bearerToken)
+        val movieReview = findById(movieReviewId)
+        movieReview.upVote(user)
+        return movieReviewRepository.save(movieReview)
+    }
+
+    fun downVoteReview(bearerToken: String, movieReviewId: Long): MovieReview {
+        val user = enthusiastService.getUserByBearerToken(bearerToken)
+        val movieReview = findById(movieReviewId)
+        movieReview.downVote(user)
+        return movieReviewRepository.save(movieReview)
     }
 }

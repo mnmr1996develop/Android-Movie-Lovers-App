@@ -4,14 +4,16 @@ package com.michaelrichards.movieloversapp.repositories.implementaions
 
 import android.content.SharedPreferences
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.michaelrichards.movieloversapp.dtos.ErrorResponse
 import com.michaelrichards.movieloversapp.dtos.SignInRequest
 import com.michaelrichards.movieloversapp.dtos.SignUpRequest
 import com.michaelrichards.movieloversapp.model.JwtToken
 import com.michaelrichards.movieloversapp.network.AuthAPI
-import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
 import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
+import com.michaelrichards.movieloversapp.repositories.results.AuthResult
 import retrofit2.HttpException
-import java.lang.Exception
 
 class AuthRepositoryImpl (
     private val api: AuthAPI,
@@ -41,17 +43,24 @@ class AuthRepositoryImpl (
 
     override suspend fun register(
         signUpRequest: SignUpRequest
-    ) : AuthResult<Unit> {
+    ) : AuthResult<String> {
         return try {
-            val response = api.register(request = signUpRequest)
+            val request = api.register(request = signUpRequest)
             prefs.edit()
-                .putString("jwt", response.accessToken)
+                .putString("jwt", request.accessToken)
                 .apply()
             AuthResult.Authorized()
         }catch (e: HttpException){
             if (e.code() == 401 || e.code() == 403){
-                AuthResult.UnAuthorized()
-            }else{
+                AuthResult.UnAuthorized("UnAuthorized Access")
+            }
+            else if (e.code() == 400){
+                val gson = Gson()
+                val type = object : TypeToken<ErrorResponse>() {}.type
+                val errorResponse: ErrorResponse? = gson.fromJson(e.response()?.errorBody()!!.charStream(), type)
+                AuthResult.BadRequest(data = errorResponse?.message)
+            }
+            else{
                 AuthResult.UnknownError()
             }
         }catch (e: Exception){
@@ -88,7 +97,7 @@ class AuthRepositoryImpl (
             if (token == null) {
                 AuthResult.UnAuthorized()
             } else {
-                api.logout("Bearer $token")
+                api.logout(token)
                 prefs.edit().remove("jwt").apply()
                 AuthResult.UnAuthorized()
             }

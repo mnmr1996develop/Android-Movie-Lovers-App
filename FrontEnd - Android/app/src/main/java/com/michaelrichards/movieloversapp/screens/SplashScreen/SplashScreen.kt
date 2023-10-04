@@ -20,16 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.components.Logo
 import com.michaelrichards.movieloversapp.navigation.Graphs
-import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
+import com.michaelrichards.movieloversapp.repositories.results.AuthResult
 
 
 @Composable

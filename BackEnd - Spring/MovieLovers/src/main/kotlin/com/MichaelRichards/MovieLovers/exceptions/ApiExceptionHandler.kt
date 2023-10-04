@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import java.time.LocalDateTime
@@ -42,22 +43,23 @@ class ApiExceptionHandler {
 
 
     @ExceptionHandler(ConstraintViolationException::class)
-    fun handleWebExchangeBindException(e: ConstraintViolationException): ResponseEntity<MutableList<APIException>> {
-        val badRequest = HttpStatus.BAD_REQUEST
-        val violations = mutableListOf<APIException>()
-        for (violation in e.constraintViolations){
+    fun handleWebExchangeBindException(e: ConstraintViolationException): ResponseEntity<APIException> {
+        val httpStatus = HttpStatus.BAD_REQUEST
+
+        val firstViolation = e.constraintViolations.firstOrNull()
+
+
             val apiException =
-                APIException(
-                    badRequest,
-                    violation.message,
-                    "BAD_DATA",
-                    LocalDateTime.now()
-                )
+                firstViolation?.let {
+                    APIException(
+                        httpStatus,
+                        it.message,
+                        "BAD_DATA",
+                        LocalDateTime.now()
+                    )
+                }
 
-            violations.add(apiException)
-        }
-
-        return ResponseEntity(violations, badRequest)
+        return ResponseEntity.status(httpStatus).body(apiException)
     }
 
 
@@ -120,13 +122,69 @@ class ApiExceptionHandler {
     }
 
     @ExceptionHandler(value = [CustomExceptions.InvalidReview::class])
-    fun handleApiRequestException(exception: CustomExceptions.InvalidReview): ResponseEntity<Any> {
+    fun handleApiRequestException(exception: CustomExceptions.InvalidReview): ResponseEntity<APIException> {
+        val code = HttpStatus.NOT_FOUND
+        val apiException = exception.message?.let {
+            APIException(
+                code,
+                it,
+                "Invalid_REVIEW",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity.status(code).body(apiException)
+    }
+
+    @ExceptionHandler(value = [CustomExceptions.AlreadyFollowing::class])
+    fun handleApiRequestException(exception: CustomExceptions.AlreadyFollowing): ResponseEntity<APIException> {
+        val code = HttpStatus.BAD_REQUEST
+        val apiException = exception.message?.let {
+            APIException(
+                code,
+                it,
+                "ALREADY_FOLLOWING",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity.status(code).body(apiException)
+    }
+
+    @ExceptionHandler(value = [CustomExceptions.InvalidUsername::class])
+    fun handleApiRequestException(exception: CustomExceptions.InvalidUsername): ResponseEntity<Any> {
+        val badRequest = HttpStatus.BAD_REQUEST
+        val apiException = exception.message?.let {
+            APIException(
+                badRequest,
+                it,
+                "BAD_USERNAME",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity(apiException, badRequest)
+    }
+
+    @ExceptionHandler(value = [CustomExceptions.InvalidPassword::class])
+    fun handleApiRequestException(exception: CustomExceptions.InvalidPassword): ResponseEntity<Any> {
+        val badRequest = HttpStatus.BAD_REQUEST
+        val apiException = exception.message?.let {
+            APIException(
+                badRequest,
+                it,
+                "BAD_PASSWORD",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity(apiException, badRequest)
+    }
+
+    @ExceptionHandler(value = [UsernameNotFoundException::class])
+    fun handleApiRequestException(exception: UsernameNotFoundException): ResponseEntity<Any> {
         val badRequest = HttpStatus.NOT_FOUND
         val apiException = exception.message?.let {
             APIException(
                 badRequest,
                 it,
-                "DUPLICATE_REVIEW",
+                "USERNAME_NOT_FOUND",
                 LocalDateTime.now()
             )
         }

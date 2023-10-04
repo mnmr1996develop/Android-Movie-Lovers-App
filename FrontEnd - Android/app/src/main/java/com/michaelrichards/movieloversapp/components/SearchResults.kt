@@ -30,7 +30,6 @@ val testMovie = Movie(
     year = 2019,
     imdbId = "tt4154796",
     rank = 451,
-    topActors = listOf(Actor("Robert Downey Jr"), Actor("Chris Evans")),
     aka = "Avengers: Endgame (2019) ",
     imdbUrl = "https://imdb.com/title/tt4154756",
     imagePosterLink = "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_.jpg",
@@ -63,12 +62,6 @@ fun SearchResults(
                 modifier = Modifier.padding(10.dp)
             ) {
                 Text(text = movie.title)
-                LazyRow {
-                    items(items = movie.topActors) { actors ->
-                        Text(text = actors.name, style = MaterialTheme.typography.bodySmall)
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
-                }
             }
 
         }

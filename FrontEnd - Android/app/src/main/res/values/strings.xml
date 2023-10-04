@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ReelReaction</string>
+    <string name="app_name">Reel Reaction</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="re_password">Re-type Password</string>
@@ -13,6 +13,7 @@
     <string name="show_password">Show Password</string>
     <string name="hide_password">Hide password</string>
     <string name="search_for_movie">Search For Movie</string>
-    <string name="movie_name">Movie of Movie</string>
+    <string name="movie_name">Search Movie by Name</string>
     <string name="poster_image">Poster image</string>
+    <string name="search_for_movie_icon">Search For Movie Icon</string>
 </resources>

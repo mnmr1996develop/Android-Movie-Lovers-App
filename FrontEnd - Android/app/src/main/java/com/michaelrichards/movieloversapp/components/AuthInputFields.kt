@@ -26,19 +26,27 @@ fun AuthInputFields(
     isSingleLine: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
-    onAction: KeyboardActions = KeyboardActions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     trailingIcon: @Composable () -> Unit = {},
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    isError: Boolean = false
-
+    isError: Boolean = false,
+    onlyLetters: Boolean = false,
+    usernameCharactersOnly: Boolean = false
 ) {
     OutlinedTextField(
         value = valueState.value,
-        onValueChange = { valueState.value = it.trim() },
+        onValueChange = {
+            valueState.value = if (onlyLetters) {
+                it.letters()
+            } else if (usernameCharactersOnly) {
+                it.usernameCharacters()
+            } else
+                it.trim()
+        },
         modifier = modifier
             .fillMaxWidth(),
         label = { Text(text = label) },
-        keyboardActions = onAction,
+        keyboardActions = keyboardActions,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = Color.White,
@@ -55,3 +63,8 @@ fun AuthInputFields(
         isError = isError
     )
 }
+
+private fun String.letters() = filter { it.isLetter() }.trim()
+
+private fun String.usernameCharacters() =
+    filter { it.isLetterOrDigit() || it == '_' || it == '-' }.trim()

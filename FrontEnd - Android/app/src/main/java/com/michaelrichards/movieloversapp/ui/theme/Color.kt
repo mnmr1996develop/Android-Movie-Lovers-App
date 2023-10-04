@@ -12,3 +12,5 @@ val Pink40 = Color(0xFF7D5260)
 
 val accentColor = Color(0xFFFCC252)
 val backgroundColor = Color(0xFF333333)
+val secondaryColor = Color(0xDD222222)
+val primaryFontColor = Color.White

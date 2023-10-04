@@ -31,13 +31,29 @@ class MovieReview (
     val enthusiast: Enthusiast,
 ){
 
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    private val _upVotes: MutableList<Enthusiast> = mutableListOf()
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    private val _downVotes: MutableList<Enthusiast> = mutableListOf()
+
+    @get:JsonIgnore
+    val upVotes get() = _upVotes.toList()
+
+    val upVoteCount get() = _upVotes.size
+
+    @get:JsonIgnore
+    val downVotes get() = _downVotes.toList()
+
+    val downVoteCount get() = _downVotes.size
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
         other as MovieReview
-
         if (id != other.id) return false
         if (imdbId != other.imdbId) return false
         if (createdAt != other.createdAt) return false
@@ -52,5 +68,24 @@ class MovieReview (
         result = 31 * result + createdAt.hashCode()
         result = 31 * result + enthusiast.hashCode()
         return result
+    }
+
+    fun upVote(enthusiast: Enthusiast){
+
+        if (_downVotes.contains(enthusiast)){
+            _downVotes.remove(enthusiast)
+        }
+
+        if (!_upVotes.contains(enthusiast))
+            _upVotes.add(enthusiast)
+    }
+
+    fun downVote(enthusiast: Enthusiast){
+        if (_upVotes.contains(enthusiast)){
+            _upVotes.remove(enthusiast)
+        }
+
+        if (!_downVotes.contains(enthusiast))
+            _downVotes.add(enthusiast)
     }
 }

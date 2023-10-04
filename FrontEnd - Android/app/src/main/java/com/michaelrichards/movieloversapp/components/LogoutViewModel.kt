@@ -3,7 +3,7 @@ package com.michaelrichards.movieloversapp.components
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.michaelrichards.movieloversapp.data.State
-import com.michaelrichards.movieloversapp.repositories.auth.AuthResult
+import com.michaelrichards.movieloversapp.repositories.results.AuthResult
 import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
