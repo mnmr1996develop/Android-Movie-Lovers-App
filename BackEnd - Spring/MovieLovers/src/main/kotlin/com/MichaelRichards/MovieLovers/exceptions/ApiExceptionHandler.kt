@@ -70,7 +70,7 @@ class ApiExceptionHandler {
             APIException(
                 badRequest,
                 it,
-                "USERNAME_TAKEN",
+                "BAD_TOKEN",
                 LocalDateTime.now()
             )
         }
@@ -143,6 +143,20 @@ class ApiExceptionHandler {
                 code,
                 it,
                 "ALREADY_FOLLOWING",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity.status(code).body(apiException)
+    }
+
+    @ExceptionHandler(value = [CustomExceptions.CannotFindFollowing::class])
+    fun handleApiRequestException(exception: CustomExceptions.CannotFindFollowing): ResponseEntity<APIException> {
+        val code = HttpStatus.BAD_REQUEST
+        val apiException = exception.message?.let {
+            APIException(
+                code,
+                it,
+                "DOES_NOT_FOLLOW",
                 LocalDateTime.now()
             )
         }

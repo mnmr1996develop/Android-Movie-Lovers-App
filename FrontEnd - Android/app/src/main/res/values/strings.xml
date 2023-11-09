@@ -16,4 +16,6 @@
     <string name="movie_name">Search Movie by Name</string>
     <string name="poster_image">Poster image</string>
     <string name="search_for_movie_icon">Search For Movie Icon</string>
+    <string name="findUser">Search Users</string>
+    <string name="search_for_user">Search For User</string>
 </resources>

@@ -89,7 +89,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended-android:1.5.1")
 
 
-
 }
 
 kapt {

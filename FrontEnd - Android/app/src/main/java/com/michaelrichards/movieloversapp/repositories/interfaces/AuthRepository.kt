@@ -1,6 +1,5 @@
 package com.michaelrichards.movieloversapp.repositories.interfaces
 
-import com.michaelrichards.movieloversapp.data.DataOrException
 import com.michaelrichards.movieloversapp.dtos.SignInRequest
 import com.michaelrichards.movieloversapp.dtos.SignUpRequest
 import com.michaelrichards.movieloversapp.repositories.results.AuthResult

@@ -1,32 +1,7 @@
 package com.michaelrichards.movieloversapp.model
 
-import com.google.gson.annotations.SerializedName
-
 data class Movie(
-    @SerializedName("#TITLE")
-    val title: String,
-
-    @SerializedName("#YEAR")
-    val year: Int,
-
-    @SerializedName("#IMDB_ID")
-    val imdbId: String,
-
-    @SerializedName("#RANK")
-    val rank: Int,
-
-    @SerializedName("#AKA")
-    val aka: String,
-
-    @SerializedName("#IMDB_URL")
-    val imdbUrl: String,
-
-    @SerializedName("#IMG_POSTER")
-    val imagePosterLink: String,
-
-    @SerializedName("photo_width")
-    val photoWidth: Int,
-
-    @SerializedName("photo_height")
-    val photoHeight: Int
+    val ok: String,
+    val description: List<Description>,
+    val errorCode: String
 )

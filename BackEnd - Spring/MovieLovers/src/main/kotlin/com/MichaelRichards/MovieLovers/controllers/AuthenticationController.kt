@@ -35,7 +35,7 @@ class AuthenticationController(private val authenticationService: Authentication
 
     @PostMapping("/authenticate")
     fun authenticate(@RequestBody jwtToken: TokenRequest): ResponseEntity<Boolean> {
-        return if (authenticationService.authenticateToken(jwtToken.jwtToken))
+        return if (authenticationService.authenticateToken(jwtToken.jwtToken.removePrefix("Bearer ")))
                     ResponseEntity.ok().body(true)
         else ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false)
     }

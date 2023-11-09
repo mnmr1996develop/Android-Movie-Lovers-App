@@ -15,9 +15,17 @@ class MovieReview (
 
     val imdbId: String,
 
+    val title: String,
+
+    val imagePosterLink: String,
+
+    val actors: String,
+
+    val imdbIdUrl: String,
+
     @Min(0)
     @Max(10)
-    var rating: Float,
+    var rating: Int,
 
     var description: String,
 
@@ -35,9 +43,15 @@ class MovieReview (
     @ManyToMany(fetch = FetchType.LAZY)
     private val _upVotes: MutableList<Enthusiast> = mutableListOf()
 
+
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     private val _downVotes: MutableList<Enthusiast> = mutableListOf()
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "movieReview", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var comments: MutableSet<Comment> = mutableSetOf()
 
     @get:JsonIgnore
     val upVotes get() = _upVotes.toList()
@@ -48,6 +62,7 @@ class MovieReview (
     val downVotes get() = _downVotes.toList()
 
     val downVoteCount get() = _downVotes.size
+
 
 
     override fun equals(other: Any?): Boolean {
@@ -88,4 +103,11 @@ class MovieReview (
         if (!_downVotes.contains(enthusiast))
             _downVotes.add(enthusiast)
     }
+
+    fun addComment(comment: Comment) {
+        if (comments.contains(comment)) return
+        comments.add(comment)
+    }
+
+
 }

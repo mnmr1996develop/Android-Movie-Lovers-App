@@ -3,9 +3,7 @@ package com.MichaelRichards.MovieLovers.models
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -56,19 +54,22 @@ class Enthusiast(
     
 
     @JsonIgnore
-    @OneToMany(mappedBy = "enthusiast", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "enthusiast", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     private val _movieReviews : MutableList<MovieReview> = mutableListOf()
 
     @Column
     @JsonIgnore
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, orphanRemoval = true)
     val followers: MutableList<Followers> = mutableListOf()
 
 
     @Column
     @JsonIgnore
-    @OneToMany(mappedBy = "followee")
+    @OneToMany(mappedBy = "followee", fetch = FetchType.LAZY, orphanRemoval = true)
     val following: MutableList<Followers> = mutableListOf()
+
+    @OneToMany(mappedBy = "enthusiast", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var comments: MutableSet<Comment> = mutableSetOf()
 
     @get:JsonIgnore
     val movieReviews get() = _movieReviews.toList()
@@ -117,6 +118,11 @@ class Enthusiast(
 
     override fun hashCode(): Int {
         return id?.hashCode() ?: 0
+    }
+
+    fun addComment(comment: Comment) {
+        if (comments.contains(comment)) return
+        comments.add(comment)
     }
 
 

@@ -24,7 +24,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository
-) : ViewModel(){
+) : ViewModel() {
     var state = State(loading = false)
     private val resultChannel = Channel<AuthResult<Unit>>()
     val authResults = resultChannel.receiveAsFlow()

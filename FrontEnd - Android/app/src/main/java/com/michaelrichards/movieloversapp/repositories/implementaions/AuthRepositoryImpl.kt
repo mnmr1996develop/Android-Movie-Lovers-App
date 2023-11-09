@@ -20,13 +20,12 @@ class AuthRepositoryImpl (
     private val prefs: SharedPreferences
 ) : AuthRepository {
 
-    private val TAG = "AuthRepositoryImpl"
     override suspend fun login(signInRequest: SignInRequest): AuthResult<Unit> {
 
         return try {
             val request = api.login(signInRequest)
             prefs.edit()
-                .putString("jwt", request.accessToken)
+                .putString("jwt", "Bearer ${request.accessToken}")
                 .apply()
             AuthResult.Authorized()
         }catch (e: HttpException){
@@ -47,7 +46,7 @@ class AuthRepositoryImpl (
         return try {
             val request = api.register(request = signUpRequest)
             prefs.edit()
-                .putString("jwt", request.accessToken)
+                .putString("jwt",  "Bearer ${request.accessToken}")
                 .apply()
             AuthResult.Authorized()
         }catch (e: HttpException){

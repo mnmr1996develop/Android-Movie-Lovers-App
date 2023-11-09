@@ -8,8 +8,10 @@ import com.michaelrichards.movieloversapp.network.AuthAPI
 import com.michaelrichards.movieloversapp.network.MovieAPI
 import com.michaelrichards.movieloversapp.network.UserDataAPI
 import com.michaelrichards.movieloversapp.repositories.implementaions.AuthRepositoryImpl
+import com.michaelrichards.movieloversapp.repositories.implementaions.MovieRepositoryImpl
 import com.michaelrichards.movieloversapp.repositories.implementaions.UserRepositoryImpl
 import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
+import com.michaelrichards.movieloversapp.repositories.interfaces.MovieRepository
 import com.michaelrichards.movieloversapp.repositories.interfaces.UserRepository
 import com.michaelrichards.movieloversapp.utils.Constants
 import dagger.Module
@@ -35,6 +37,8 @@ object AppModule {
             .create(AuthAPI::class.java)
     }
 
+    @Singleton
+    @Provides
     fun provideMovieAPI(): MovieAPI{
         return Retrofit.Builder()
             .baseUrl(Constants.MOVIE_API_BASE_URL)
@@ -65,6 +69,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserRepository(api: UserDataAPI, prefs: SharedPreferences): UserRepository = UserRepositoryImpl(api, prefs)
+
+    @Provides
+    @Singleton
+    fun provideMovieRepository(api: MovieAPI): MovieRepository = MovieRepositoryImpl(api)
 
 
 }

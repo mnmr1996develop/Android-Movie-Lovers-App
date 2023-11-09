@@ -1,11 +1,7 @@
 package com.MichaelRichards.MovieLovers.models
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 class Followers(
@@ -14,13 +10,15 @@ class Followers(
     val id: Long? = null,
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id")
     val follower: Enthusiast,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "following_id")
-    val followee: Enthusiast
+    val followee: Enthusiast,
+
+    val localDateTime: LocalDateTime
 ) {
     override fun toString(): String {
         return "Followers(id=$id, follower=${follower.username}, followee=${followee.username})"

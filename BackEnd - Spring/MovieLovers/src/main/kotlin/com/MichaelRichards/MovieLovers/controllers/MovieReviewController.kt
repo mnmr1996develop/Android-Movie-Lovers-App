@@ -1,11 +1,14 @@
 package com.MichaelRichards.MovieLovers.controllers
 
-import com.MichaelRichards.MovieLovers.dtos.MovieReviewDTO
+import com.MichaelRichards.MovieLovers.dtos.CommentFullDTO
+import com.MichaelRichards.MovieLovers.dtos.CommentInitializerDTO
+import com.MichaelRichards.MovieLovers.dtos.MovieReviewFullDataDTO
+import com.MichaelRichards.MovieLovers.dtos.MovieReviewStarterDTO
+import com.MichaelRichards.MovieLovers.models.Comment
 import com.MichaelRichards.MovieLovers.models.MovieReview
 import com.MichaelRichards.MovieLovers.services.MovieReviewService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -25,28 +28,29 @@ class MovieReviewController(
 ) {
     companion object {
         private const val BASE_PATH = "/api/v1/review"
+        private const val AUTHORIZATION_STRING = "Authorization"
     }
 
     @GetMapping
     fun getUserReviews(
-        @RequestHeader("Authorization") bearerToken: String
-    ): ResponseEntity<List<MovieReview>> {
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String
+    ): ResponseEntity<List<MovieReviewFullDataDTO>> {
         return ResponseEntity.ok(movieReviewService.getMyMovieReviews(bearerToken))
     }
 
     @PostMapping
     fun addReview(
-        @RequestHeader("Authorization") bearerToken: String,
-        @RequestBody review: MovieReviewDTO
-    ): ResponseEntity<MovieReview> {
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String,
+        @RequestBody review: MovieReviewStarterDTO
+    ): ResponseEntity<MovieReviewFullDataDTO> {
         val uri = URI.create(BASE_PATH)
         return ResponseEntity.created(uri).body(movieReviewService.addReview(bearerToken, review))
     }
 
     @PatchMapping
     fun updateReview(
-        @RequestHeader("Authorization") bearerToken: String,
-        @RequestBody review: MovieReviewDTO
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String,
+        @RequestBody review: MovieReviewStarterDTO
     ): ResponseEntity<MovieReview> {
         val uri = URI.create(BASE_PATH)
         return ResponseEntity.status(HttpStatus.OK).body(movieReviewService.updateReview(bearerToken, review))
@@ -54,7 +58,7 @@ class MovieReviewController(
 
     @DeleteMapping
     fun deleteReview(
-        @RequestHeader("Authorization") bearerToken: String,
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String,
         @RequestBody imdbId: String
     ): ResponseEntity<MovieReview> {
         val uri = URI.create(BASE_PATH)
@@ -64,7 +68,7 @@ class MovieReviewController(
     @PostMapping
     @RequestMapping("/{movieReviewId}/upVote")
     fun upVoteReview(
-        @RequestHeader("Authorization") bearerToken: String,
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String,
         @PathVariable movieReviewId: Long
     ): ResponseEntity<MovieReview> {
 
@@ -74,11 +78,32 @@ class MovieReviewController(
     @PostMapping
     @RequestMapping("/{movieReviewId}/downVote")
     fun downVoteReview(
-        @RequestHeader("Authorization") bearerToken: String,
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String,
         @PathVariable movieReviewId: Long
     ): ResponseEntity<MovieReview> {
 
         return ResponseEntity.ok().body(movieReviewService.downVoteReview(bearerToken, movieReviewId))
+    }
+
+    @PostMapping
+    @RequestMapping("/{movieReviewId}/comment")
+    fun addComment(
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String,
+        @PathVariable movieReviewId: Long,
+        @RequestBody commentInitializerDTO: CommentInitializerDTO
+    ): ResponseEntity<CommentFullDTO>{
+        val uri = URI.create("$BASE_PATH/$movieReviewId/comment")
+        return ResponseEntity.created(uri).body(movieReviewService.addComment(bearerToken, commentInitializerDTO, movieReviewId))
+    }
+
+    @GetMapping
+    @RequestMapping("/{movieReviewId}/comments")
+    fun getCommentsByPost(
+        @RequestHeader(AUTHORIZATION_STRING) bearerToken: String,
+        @PathVariable movieReviewId: Long,
+        @RequestParam pageNumber: Int
+    ): ResponseEntity<List<CommentFullDTO>>{
+        return ResponseEntity.ok(movieReviewService.getMovieReviewComments(bearerToken = bearerToken, movieReviewId = movieReviewId, pageNumber = pageNumber))
     }
 
 }
