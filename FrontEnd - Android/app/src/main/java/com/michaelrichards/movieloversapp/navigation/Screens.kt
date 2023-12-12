@@ -17,7 +17,7 @@ sealed class Screens(val route: String) {
 
     object FollowScreen: Screens("follow_screen")
 
-    object ReviewScreen: Screens("review_screen")
+    object MovieDetails: Screens("movie_details")
 
 }
 

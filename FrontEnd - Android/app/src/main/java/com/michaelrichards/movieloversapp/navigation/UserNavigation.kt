@@ -15,6 +15,7 @@ import com.michaelrichards.movieloversapp.screens.FollowingScreen.FollowingViewM
 import com.michaelrichards.movieloversapp.screens.HomeScreen.HomeScreen
 import com.michaelrichards.movieloversapp.screens.HomeScreen.HomeViewModel
 import com.michaelrichards.movieloversapp.screens.LoginScreen.LoginScreen
+import com.michaelrichards.movieloversapp.screens.MovieDetailsScreen.MovieDetailScreen
 import com.michaelrichards.movieloversapp.screens.RegistrationScreen.RegistrationScreen
 import com.michaelrichards.movieloversapp.screens.ReviewScreen.ReviewScreen
 import com.michaelrichards.movieloversapp.screens.SearchScreen.SearchScreen
@@ -58,9 +59,12 @@ fun UserNavigation() {
             }
 
             val userDetailRoute = Screens.UserDetailsScreen.route
-            composable(route = "$userDetailRoute/{username}", arguments = listOf(navArgument("username"){
-                type = NavType.StringType
-            })){backstackEntry ->
+            composable(
+                route = "$userDetailRoute/{username}",
+                arguments = listOf(navArgument("username") {
+                    type = NavType.StringType
+                })
+            ) { backstackEntry ->
                 backstackEntry.arguments?.getString("username").let {
                     UserDetailsScreen(navController = navController, username = it.toString())
                 }
@@ -81,13 +85,24 @@ fun UserNavigation() {
             }
 
 
-            composable(route = "${Screens.ReviewScreen.route}/{imbdId}", arguments = listOf(
-                navArgument("imbdId"){
+           /* composable(route = "${Screens.ReviewScreen.route}/{imbdId}", arguments = listOf(
+                navArgument("imbdId") {
                     type = NavType.StringType
                 }
-            )){backStackEntry ->
+            )) { backStackEntry ->
                 backStackEntry.arguments?.getString("imbdId").let {
                     ReviewScreen(navController = navController, imbdId = it.toString())
+                }
+
+            }*/
+
+            composable(route = "${Screens.MovieDetails.route}/{imbdId}", arguments = listOf(
+                navArgument("imbdId") {
+                    type = NavType.StringType
+                }
+            )) { backStackEntry ->
+                backStackEntry.arguments?.getString("imbdId").let {
+                    MovieDetailScreen(navController = navController, imbdId = it.toString())
                 }
 
             }

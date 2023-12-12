@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Min
 import java.time.LocalDateTime
 
 @Entity
+@NamedQueries(value = [
+    NamedQuery(name = "MovieReview.findByTitle", query = "select m from MovieReview m where m.title = :title")
+])
 class MovieReview (
 
     @Id
@@ -27,7 +30,9 @@ class MovieReview (
     @Max(10)
     var rating: Int,
 
+    @Column(length = 2000)
     var description: String,
+
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
 
@@ -41,27 +46,19 @@ class MovieReview (
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
-    private val _upVotes: MutableList<Enthusiast> = mutableListOf()
-
-
+    val upVotes: MutableList<Enthusiast> = mutableListOf()
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
-    private val _downVotes: MutableList<Enthusiast> = mutableListOf()
+    val downVotes: MutableList<Enthusiast> = mutableListOf()
 
     @JsonIgnore
     @OneToMany(mappedBy = "movieReview", cascade = [CascadeType.ALL], orphanRemoval = true)
     var comments: MutableSet<Comment> = mutableSetOf()
 
-    @get:JsonIgnore
-    val upVotes get() = _upVotes.toList()
+    val upVoteCount get() = upVotes.size
 
-    val upVoteCount get() = _upVotes.size
-
-    @get:JsonIgnore
-    val downVotes get() = _downVotes.toList()
-
-    val downVoteCount get() = _downVotes.size
+    val downVoteCount get() = downVotes.size
 
 
 
@@ -87,21 +84,21 @@ class MovieReview (
 
     fun upVote(enthusiast: Enthusiast){
 
-        if (_downVotes.contains(enthusiast)){
-            _downVotes.remove(enthusiast)
+        if (downVotes.contains(enthusiast)){
+            downVotes.remove(enthusiast)
         }
 
-        if (!_upVotes.contains(enthusiast))
-            _upVotes.add(enthusiast)
+        if (!upVotes.contains(enthusiast))
+            upVotes.add(enthusiast)
     }
 
     fun downVote(enthusiast: Enthusiast){
-        if (_upVotes.contains(enthusiast)){
-            _upVotes.remove(enthusiast)
+        if (upVotes.contains(enthusiast)){
+            upVotes.remove(enthusiast)
         }
 
-        if (!_downVotes.contains(enthusiast))
-            _downVotes.add(enthusiast)
+        if (!downVotes.contains(enthusiast))
+            downVotes.add(enthusiast)
     }
 
     fun addComment(comment: Comment) {

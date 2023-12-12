@@ -6,9 +6,9 @@ import com.michaelrichards.movieloversapp.repositories.results.AuthResult
 
 interface AuthRepository {
     suspend fun login(signInRequest: SignInRequest): AuthResult<Unit>
-    suspend fun register(signUpRequest: SignUpRequest) : AuthResult<String>
+    suspend fun register(signUpRequest: SignUpRequest): AuthResult<String>
 
-    suspend fun authenticate() : AuthResult<Unit>
+    suspend fun authenticate(): AuthResult<Unit>
 
     suspend fun logout(): AuthResult<Unit>
 }

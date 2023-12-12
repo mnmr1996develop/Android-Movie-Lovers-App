@@ -1,6 +1,6 @@
 package com.michaelrichards.movieloversapp.dtos
 
-data class MovieReviewDTO(
+data class ReviewMovieDTO(
     val imdbId: String,
     val rating: Int,
     val title: String,

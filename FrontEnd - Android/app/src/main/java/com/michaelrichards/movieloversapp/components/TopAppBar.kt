@@ -1,6 +1,7 @@
 package com.michaelrichards.movieloversapp.components
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,6 +51,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun TopBar(
     navController: NavController,
+    includeBackButton: Boolean = false,
     logoutViewModel: LogoutViewModel = hiltViewModel()
 ) {
 
@@ -79,10 +84,22 @@ fun TopBar(
                     .padding(horizontal = 5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
                 Row(
                     modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    if (includeBackButton) {
+                        Image(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = stringResource(
+                                id = R.string.go_back
+                            ),
+                            colorFilter = ColorFilter.tint(accentColor),
+                            modifier = Modifier.clickable { navController.popBackStack() }
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
                     Column {
                         Logo(modifier = Modifier
                             .size(50.dp)
@@ -94,7 +111,7 @@ fun TopBar(
                                 }
                             })
                     }
-                    Spacer(modifier = Modifier.width(5.dp))
+
                 }
 
 

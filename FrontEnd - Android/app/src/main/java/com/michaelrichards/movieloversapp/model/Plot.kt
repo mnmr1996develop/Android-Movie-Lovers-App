@@ -1,5 +1,5 @@
 package com.michaelrichards.movieloversapp.model
 
-data class Actor(
-    val name: String
+data class Plot (
+    val plotText: PlotText
 )

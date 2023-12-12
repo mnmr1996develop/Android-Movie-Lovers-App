@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michaelrichards.movieloversapp.dtos.UserDataDTO
+import com.michaelrichards.movieloversapp.dtos.BasicUserDataDTO
+import com.michaelrichards.movieloversapp.dtos.UserProfileDTO
 import com.michaelrichards.movieloversapp.repositories.interfaces.UserRepository
 import com.michaelrichards.movieloversapp.utils.DefaultPaginator
+import com.michaelrichards.movieloversapp.utils.ScrollScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,13 +19,10 @@ class FollowingViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    var followingList: List<UserDataDTO> = mutableListOf()
-    var followersList: List<UserDataDTO> = mutableListOf()
+
+    var followersState by mutableStateOf(ScrollScreenState<UserProfileDTO>())
 
 
-    var followersState by mutableStateOf(ScreenState())
-
-    
     private val followersPaginator = DefaultPaginator(
         initialKey = followersState.page,
         onLoadUpdated = {
@@ -47,7 +46,7 @@ class FollowingViewModel @Inject constructor(
         }
     )
 
-    var followingState by mutableStateOf(ScreenState())
+    var followingState by mutableStateOf(ScrollScreenState<UserProfileDTO>())
 
 
     private val followingPaginator = DefaultPaginator(
@@ -82,6 +81,33 @@ class FollowingViewModel @Inject constructor(
         followingPaginator.loadNextItems()
     }
 
+    fun resetFollowing() {
+        viewModelScope.launch {
+            followingPaginator.reset()
+            followingState.items = listOf()
+            followingPaginator.loadNextItems()
+        }
+    }
+
+    fun resetFollowers() {
+        viewModelScope.launch {
+            followersPaginator.reset()
+            followersState.items = listOf()
+            followersPaginator.loadNextItems()
+        }
+    }
+
+    fun follow(username: String) {
+        viewModelScope.launch {
+            userRepository.follow(username)
+        }
+    }
+
+    fun unfollow(username: String) {
+        viewModelScope.launch {
+            userRepository.unfollow(username)
+        }
+    }
 
     init {
         loadMoreFollowers()
@@ -89,11 +115,3 @@ class FollowingViewModel @Inject constructor(
     }
 
 }
-
-data class ScreenState(
-    val isLoading: Boolean = false,
-    val items: List<UserDataDTO> = listOf(),
-    val error: String? = null,
-    val endReached: Boolean = false,
-    val page: Int = 0
-)

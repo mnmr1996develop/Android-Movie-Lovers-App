@@ -9,3 +9,5 @@ data class MovieReviewStarterDTO(
     val imdbIdUrl: String,
     val description: String,
 )
+
+

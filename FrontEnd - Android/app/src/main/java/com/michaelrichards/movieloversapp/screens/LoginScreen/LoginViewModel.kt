@@ -13,10 +13,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "LoginViewModel"
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: AuthRepository
-): ViewModel() {
+) : ViewModel() {
 
     var state = State(loading = false)
     private val resultChannel = Channel<AuthResult<Unit>>()
@@ -29,5 +30,5 @@ class LoginViewModel @Inject constructor(
         resultChannel.send(result)
         state.loading = false
     }
-    
+
 }

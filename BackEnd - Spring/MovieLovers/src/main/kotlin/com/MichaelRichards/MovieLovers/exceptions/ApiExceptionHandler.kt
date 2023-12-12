@@ -27,6 +27,20 @@ class ApiExceptionHandler {
         return ResponseEntity.status(badRequest).body(apiException)
     }
 
+    @ExceptionHandler(value = [IndexOutOfBoundsException::class])
+    fun handleApiRequestException(exception: java.lang.IndexOutOfBoundsException): ResponseEntity<Any> {
+        val badRequest = HttpStatus.BAD_REQUEST
+        val apiException = exception.message?.let {
+            APIException(
+                badRequest,
+                it,
+                "INDEX_OUT_OF_BOUNDS",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity.status(badRequest).body(apiException)
+    }
+
     @ExceptionHandler(value = [BadCredentialsException::class])
     fun handleApiRequestException(exception: BadCredentialsException): ResponseEntity<Any> {
         val badRequest = HttpStatus.BAD_REQUEST
@@ -71,6 +85,20 @@ class ApiExceptionHandler {
                 badRequest,
                 it,
                 "BAD_TOKEN",
+                LocalDateTime.now()
+            )
+        }
+        return ResponseEntity.status(badRequest).body(apiException)
+    }
+
+    @ExceptionHandler(value = [CustomExceptions.SomethingWentWrong::class])
+    fun handleSomethingWentWrong(exception: CustomExceptions.SomethingWentWrong): ResponseEntity<Any> {
+        val badRequest = HttpStatus.BAD_REQUEST
+        val apiException = exception.message?.let {
+            APIException(
+                badRequest,
+                it,
+                "RETRY_MAYBE_IDK_BUDDY",
                 LocalDateTime.now()
             )
         }

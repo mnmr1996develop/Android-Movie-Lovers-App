@@ -8,6 +8,7 @@
     <string name="birthday">Birthday</string>
     <string name="email">E-mail</string>
     <string name="login">Login</string>
+    <string name="logout">Log Out</string>
     <string name="sign_up">Sign Up</string>
     <string name="site_logo">Site Logo</string>
     <string name="show_password">Show Password</string>
@@ -18,4 +19,28 @@
     <string name="search_for_movie_icon">Search For Movie Icon</string>
     <string name="findUser">Search Users</string>
     <string name="search_for_user">Search For User</string>
+    <string name="back">Back</string>
+    <string name="logout_unsuccessful">"Logout Unsuccessful"</string>
+    <string name="logout_successful">"Logout Successful"</string>
+    <string name="starring">Starring:</string>
+    <string name="directed_by">Directed By:</string>
+    <string name="created_by">Created By:</string>
+    <string name="review">Review</string>
+    <string name="submit_review">Submit Review</string>
+    <string name="content_rating">Content Rating:</string>
+    <string name="rate_movie">Rate Movie</string>
+    <string name="released_date">Released Date:</string>
+    <string name="review_length_message">Review must be longer than 10 characters</string>
+    <string name="follow">Follow</string>
+    <string name="reviews">Reviews</string>
+    <string name="following">Following</string>
+    <string name="followers">Followers</string>
+    <string name="follow_icon">Following Icon</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="unfollow_icon">Unfollow Icon</string>
+    <string name="following_string">Following</string>
+    <string name="go_back">Back Button</string>
+    <string name="see_more">See More</string>
+    <string name="see_less">See Less</string>
+
 </resources>

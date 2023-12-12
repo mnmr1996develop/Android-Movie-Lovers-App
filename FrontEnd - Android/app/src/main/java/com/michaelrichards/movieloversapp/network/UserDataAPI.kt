@@ -1,7 +1,6 @@
 package com.michaelrichards.movieloversapp.network
 
-import com.michaelrichards.movieloversapp.dtos.SearchDataDTO
-import com.michaelrichards.movieloversapp.dtos.UserDataDTO
+import com.michaelrichards.movieloversapp.dtos.BasicUserDataDTO
 import com.michaelrichards.movieloversapp.dtos.UserProfileDTO
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -15,25 +14,43 @@ import javax.inject.Singleton
 interface UserDataAPI {
 
     @GET("users")
-    suspend fun getUserBasicDetails(@Header("Authorization") token: String): UserDataDTO
+    suspend fun getUserBasicDetails(@Header("Authorization") token: String): UserProfileDTO
 
     @GET("users/user/{username}")
-    suspend fun getUserProfileDetails(@Header("Authorization") token: String, @Path("username") username: String): UserProfileDTO
+    suspend fun getUserProfileDetails(
+        @Header("Authorization") token: String,
+        @Path("username") username: String
+    ): UserProfileDTO
 
     @GET("users/following")
-    suspend fun getUserFollowing(@Header("Authorization") token: String, @Query("pageNumber") pageNumber: Int): List<UserDataDTO>
+    suspend fun getUserFollowing(
+        @Header("Authorization") token: String,
+        @Query("pageNumber") pageNumber: Int
+    ): List<UserProfileDTO>
 
     @GET("users/search")
-    suspend fun searchUser(@Header("Authorization") token: String, @Query("query") query: String): List<SearchDataDTO>
+    suspend fun searchUser(
+        @Header("Authorization") token: String,
+        @Query("query") query: String
+    ): List<UserProfileDTO>
 
     @GET("users/followers")
-    suspend fun getUserFollowers(@Header("Authorization") token: String, @Query("pageNumber") pageNumber: Int): List<UserDataDTO>
+    suspend fun getUserFollowers(
+        @Header("Authorization") token: String,
+        @Query("pageNumber") pageNumber: Int
+    ): List<UserProfileDTO>
 
     @POST("users/follow")
-    suspend fun follow(@Header("Authorization") token: String,@Query("username") username: String): UserDataDTO
+    suspend fun follow(
+        @Header("Authorization") token: String,
+        @Query("username") username: String
+    ): BasicUserDataDTO
 
     @DELETE("users/follow")
-    suspend fun unfollow(@Header("Authorization") token: String,@Query("username") username: String): Unit
+    suspend fun unfollow(
+        @Header("Authorization") token: String,
+        @Query("username") username: String
+    ): Unit
 
 
 }

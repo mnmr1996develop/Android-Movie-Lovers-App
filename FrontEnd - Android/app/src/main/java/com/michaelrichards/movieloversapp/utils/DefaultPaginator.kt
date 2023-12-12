@@ -1,7 +1,5 @@
 package com.michaelrichards.movieloversapp.utils
 
-import com.michaelrichards.movieloversapp.dtos.UserDataDTO
-
 class DefaultPaginator<Key, Item>(
     private val initialKey: Key,
     private inline val onLoadUpdated: (Boolean) -> Unit,

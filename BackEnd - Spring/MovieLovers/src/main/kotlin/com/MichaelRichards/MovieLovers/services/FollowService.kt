@@ -1,10 +1,12 @@
 package com.MichaelRichards.MovieLovers.services
 
 import com.MichaelRichards.MovieLovers.dtos.BasicUserDataDTO
+import com.MichaelRichards.MovieLovers.dtos.ProfileDataDTO
 import com.MichaelRichards.MovieLovers.exceptions.CustomExceptions
 import com.MichaelRichards.MovieLovers.models.Enthusiast
 import com.MichaelRichards.MovieLovers.models.Followers
 import com.MichaelRichards.MovieLovers.repositories.FollowRepository
+import com.MichaelRichards.MovieLovers.utils.isPageNumberValid
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -54,22 +56,25 @@ class FollowService(
         followRepository.delete(followModel)
     }
 
-    fun getMyFollowersPaged(bearerToken: String, pageNumber: Int): List<BasicUserDataDTO> {
+    fun getMyFollowersPaged(bearerToken: String, pageNumber: Int): List<ProfileDataDTO> {
         val user = enthusiastService.getUserByBearerToken(bearerToken)
 
-        if (pageNumber < 0) {
-            throw IndexOutOfBoundsException()
-        }
+        isPageNumberValid(pageNumber)
 
         val pageable: Pageable = PageRequest.of(pageNumber, 20)
 
         return followRepository.findByFolloweePageable(user,pageable).map {follower ->
-            BasicUserDataDTO(
+            ProfileDataDTO(
                 firstName = follower.follower.firstName,
                 lastName = follower.follower.lastName,
                 email = follower.follower.email,
                 username = follower.follower.username,
-                birthday = follower.follower.birthday
+                birthday = follower.follower.birthday,
+                followers = follower.follower.followers.size,
+                following = follower.follower.following.size,
+                totalReviews = follower.follower.movieReviews.size,
+                amIFollowing = followRepository.existsByFollowerAndFollowee(user, follower.follower)
+
             )
         }
     }
@@ -87,37 +92,44 @@ class FollowService(
         }
     }
 
-    fun getUserIFollowPaged(bearerToken: String, pageNumber: Int): List<BasicUserDataDTO> {
+    fun getUserIFollowPaged(bearerToken: String, pageNumber: Int): List<ProfileDataDTO> {
         val user = enthusiastService.getUserByBearerToken(bearerToken)
 
-        if (pageNumber < 0) {
-            throw IndexOutOfBoundsException("")
-        }
+        isPageNumberValid(pageNumber)
 
         val pageable: Pageable = PageRequest.of(pageNumber, 20)
 
         return followRepository.findByFollowerPageable(user, pageable).map { usersIFollow ->
-            BasicUserDataDTO(
+            ProfileDataDTO(
                 firstName = usersIFollow.followee.firstName,
                 lastName = usersIFollow.followee.lastName,
                 username = usersIFollow.followee.username,
                 email = usersIFollow.followee.email,
-                birthday = usersIFollow.followee.birthday
+                birthday = usersIFollow.followee.birthday,
+                followers = usersIFollow.followee.followers.size,
+                following = usersIFollow.followee.following.size,
+                totalReviews = usersIFollow.followee.movieReviews.size,
+                amIFollowing = true
             )
         }
     }
 
-    fun getUserIFollow(bearerToken: String): List<BasicUserDataDTO> {
+    fun getUserIFollow(bearerToken: String): List<ProfileDataDTO> {
         val user = enthusiastService.getUserByBearerToken(bearerToken)
         return followRepository.findByFollower(user).map { usersIFollow ->
-            BasicUserDataDTO(
+            ProfileDataDTO(
                 firstName = usersIFollow.followee.firstName,
                 lastName = usersIFollow.followee.lastName,
                 username = usersIFollow.followee.username,
                 email = usersIFollow.followee.email,
-                birthday = usersIFollow.followee.birthday
+                birthday = usersIFollow.followee.birthday,
+                followers = usersIFollow.followee.followers.size,
+                following = usersIFollow.followee.following.size,
+                totalReviews = usersIFollow.followee.movieReviews.size,
             )
         }
     }
+
+
 
 }

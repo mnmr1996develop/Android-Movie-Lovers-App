@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -42,26 +43,20 @@ fun MyDatePicker(
     val day = c.get(Calendar.DAY_OF_MONTH)
 
     val datePickerDialog = DatePickerDialog(
-        context, { d, year1, month1, day1 ->
+        context, { _, year1, month1, day1 ->
             valueState.value = LocalDate.of(year1, month1+1, day1)
         }, year, month, day
     )
-    /*
-    * modifier = Modifier.clickable {
-                    datePickerDialog.show()
-                },
-    * */
-
     OutlinedTextField(
         modifier = modifier
             .fillMaxWidth().clickable {
                 datePickerDialog.show()
             },
         value = valueState.value.format(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toString(),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = Color.White,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor =  Color.White,
+            unfocusedTextColor = Color.White,
             focusedLabelColor = Color.White,
-            errorBorderColor = Color.Red,
             focusedBorderColor = accentColor,
             unfocusedBorderColor = accentColor,
             unfocusedLabelColor = Color.White,

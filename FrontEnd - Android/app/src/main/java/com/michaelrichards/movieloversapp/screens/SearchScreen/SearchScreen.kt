@@ -23,8 +23,8 @@ import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -37,6 +37,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -63,12 +64,14 @@ import com.michaelrichards.movieloversapp.navigation.Screens
 import com.michaelrichards.movieloversapp.ui.theme.accentColor
 
 private const val TAG = "SearchScreen"
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+
+@OptIn(
+    ExperimentalFoundationApi::class,
     ExperimentalComposeUiApi::class
 )
 @Composable
 fun SearchScreen(
-    modifier: Modifier= Modifier,
+    modifier: Modifier = Modifier,
     navController: NavController = NavController(LocalContext.current),
     viewModel: SearchViewModel = hiltViewModel()
 ) {
@@ -79,12 +82,11 @@ fun SearchScreen(
     }
 
     val isSearching by viewModel.isSearching.collectAsState()
-    
+
     val users by viewModel.users.collectAsState()
-    
+
     val movies by viewModel.movies.collectAsState()
-    
-    
+
 
     val tabs = listOf(
         TabItem(
@@ -92,19 +94,18 @@ fun SearchScreen(
             selectedIcon = Icons.Filled.Movie,
             unselectedIcon = Icons.Outlined.Movie,
             data = viewModel.movies.collectAsState().value
-        ){
-         viewModel.searchMovie(searchString)
+        ) {
+            viewModel.searchMovie(searchString)
         },
         TabItem(
             tabName = "User",
             selectedIcon = Icons.Filled.Person,
             unselectedIcon = Icons.Outlined.Person,
             data = viewModel.users.collectAsState().value
-        ){
-         viewModel.searchUser(searchString)
+        ) {
+            viewModel.searchUser(searchString)
         }
     )
-
 
 
     val scope = rememberCoroutineScope()
@@ -116,31 +117,31 @@ fun SearchScreen(
 
 
 
-    Scaffold (
-        topBar = { TopBar(navController = navController)},
-        bottomBar = { BottomBar(navController = navController, itemNumber = 1)}
-    ){paddingValues ->
+    Scaffold(
+        topBar = { TopBar(navController = navController) },
+        bottomBar = { BottomBar(navController = navController, itemNumber = 1) }
+    ) { paddingValues ->
         Surface(
             modifier = modifier
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            
-            LaunchedEffect(selectedTabIndex){
+
+            LaunchedEffect(selectedTabIndex) {
                 pagerState.animateScrollToPage(selectedTabIndex)
                 tabs[selectedTabIndex].invokeAction()
             }
 
-            LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress){
-                if (!pagerState.isScrollInProgress){
+            LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
+                if (!pagerState.isScrollInProgress) {
                     selectedTabIndex = pagerState.currentPage
                     tabs[selectedTabIndex].invokeAction()
                 }
             }
-            
-            Column (
+
+            Column(
                 modifier = Modifier.padding(8.dp)
-            ){
+            ) {
 
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
@@ -155,18 +156,17 @@ fun SearchScreen(
                         )
                     },
                     singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        textColor = Color.White,
-                        focusedLabelColor = Color.White,
-                        errorBorderColor = Color.Red,
-                        focusedBorderColor = accentColor,
-                        unfocusedBorderColor = accentColor,
-                        unfocusedLabelColor = Color.White
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.secondary,
+                        focusedLabelColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.secondary
                     ),
                     label = { Text(text = stringResource(id = if (selectedTabIndex == 0) R.string.search_for_movie else R.string.search_for_user)) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
                     keyboardActions = KeyboardActions(onGo = {
                         tabs[selectedTabIndex].invokeAction()
+                        keyboard?.hide()
                     })
                 )
 
@@ -179,51 +179,86 @@ fun SearchScreen(
                     divider = { Divider() },
                     containerColor = Color(0xFF333333)
                 ) {
-                    tabs.forEachIndexed{ index: Int, tabName ->
+                    tabs.forEachIndexed { index: Int, tabName ->
                         Tab(
                             modifier = Modifier.clip(
-                                if (index == 0) RoundedCornerShape(topStart = 30.dp, bottomStart = 30.dp, bottomEnd = 0.dp, topEnd = 0.dp)
-                                else if(index == tabs.size-1) RoundedCornerShape(topStart = 0.dp, bottomStart = 0.dp, bottomEnd = 30.dp, topEnd = 30.dp)
-                                else RectangleShape
+                                when (index) {
+                                    0 -> RoundedCornerShape(
+                                        topStart = 30.dp,
+                                        bottomStart = 30.dp,
+                                        bottomEnd = 0.dp,
+                                        topEnd = 0.dp
+                                    )
+
+                                    tabs.size - 1 -> RoundedCornerShape(
+                                        topStart = 0.dp,
+                                        bottomStart = 0.dp,
+                                        bottomEnd = 30.dp,
+                                        topEnd = 30.dp
+                                    )
+
+                                    else -> RectangleShape
+                                }
                             ),
                             selected = selectedTabIndex == index,
                             onClick = { selectedTabIndex = index },
-                            text = {Text(text = tabName.tabName, color = if (selectedTabIndex == index ) accentColor else Color.White )},
+                            text = {
+                                Text(
+                                    text = tabName.tabName,
+                                    color = if (selectedTabIndex == index) accentColor else Color.White
+                                )
+                            },
                             selectedContentColor = accentColor,
                             unselectedContentColor = Color.Gray,
-                            icon = { Icon(imageVector = if (selectedTabIndex == index) tabName.selectedIcon else tabName.unselectedIcon , contentDescription = "")}
+                            icon = {
+                                Icon(
+                                    imageVector = if (selectedTabIndex == index) tabName.selectedIcon else tabName.unselectedIcon,
+                                    contentDescription = ""
+                                )
+                            }
                         )
                     }
                 }
-                if (isSearching){
-                    Box (modifier = Modifier.fillMaxSize()){
+                if (isSearching) {
+                    Box(modifier = Modifier.fillMaxSize()) {
                         CircularProgressIndicator()
                     }
-                }else{
-                    HorizontalPager(state = pagerState, modifier = Modifier.fillMaxWidth()) {index ->
+                } else {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier.fillMaxWidth()
+                    ) { index ->
 
-                        when(selectedTabIndex){
+                        when (selectedTabIndex) {
                             0 -> {
-                                LazyColumn{
-                                    items(movies){
-                                        MovieSearchResults(description = it)
+                                LazyColumn {
+                                    items(movies) {
+                                        MovieSearchResults(description = it){
+                                            navController.navigate("${Screens.MovieDetails.route}/${it.imdbId}")
+                                        }
                                     }
                                 }
                             }
-                            1 -> LazyColumn{
-                                items(users){
-                                    Surface (
+
+                            1 -> LazyColumn {
+                                items(users) {
+                                    Surface(
                                         modifier = Modifier.clickable {
                                             navController.navigate("${Screens.UserDetailsScreen.route}/${it.username}")
                                         }
-                                    ){
-                                        UserSearchResults(userDataDTO = it){
-                                            if (it.following){
+                                    ) {
+                                        var amIFollowing = remember {
+                                            mutableStateOf(it.amIFollowing)
+                                        }
+
+                                        UserSearchResults(userDataDTO = it, following = amIFollowing) {
+                                            if (it.amIFollowing) {
+                                                viewModel.unfollow(it.username)
+
+                                            } else {
                                                 viewModel.follow(it.username)
                                             }
-                                            else{
-                                                viewModel.unfollow(it.username)
-                                            }
+                                            amIFollowing.value = !amIFollowing.value
                                         }
                                     }
 
@@ -241,7 +276,6 @@ fun SearchScreen(
     }
 
 
-
 }
 
 private data class TabItem(
@@ -250,7 +284,7 @@ private data class TabItem(
     val unselectedIcon: ImageVector,
     val data: List<Any>,
     val action: () -> Unit
-){
+) {
     fun invokeAction() {
         action()
     }

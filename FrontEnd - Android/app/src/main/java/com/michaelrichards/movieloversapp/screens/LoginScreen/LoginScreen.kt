@@ -99,9 +99,9 @@ fun LoginScreen(
         mutableStateOf(false)
     }
 
-    if (state.loading){
+    if (state.loading) {
         BigCircularIndicator()
-    }else {
+    } else {
         loginMainBody(
             modifier,
             username,
@@ -241,11 +241,12 @@ fun previewLoginScreen() {
         navController = NavController(LocalContext.current)
     )
 }
+
 @Composable
-fun BigCircularIndicator(){
-    Surface (
+fun BigCircularIndicator() {
+    Surface(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         CircularProgressIndicator(modifier = Modifier.fillMaxSize())
     }
 }

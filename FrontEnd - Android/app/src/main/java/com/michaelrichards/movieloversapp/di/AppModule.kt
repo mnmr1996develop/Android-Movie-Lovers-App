@@ -6,12 +6,15 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.michaelrichards.movieloversapp.network.AuthAPI
 import com.michaelrichards.movieloversapp.network.MovieAPI
+import com.michaelrichards.movieloversapp.network.MovieReviewAPI
 import com.michaelrichards.movieloversapp.network.UserDataAPI
 import com.michaelrichards.movieloversapp.repositories.implementaions.AuthRepositoryImpl
 import com.michaelrichards.movieloversapp.repositories.implementaions.MovieRepositoryImpl
+import com.michaelrichards.movieloversapp.repositories.implementaions.UserMovieReviewsRepositoryImpl
 import com.michaelrichards.movieloversapp.repositories.implementaions.UserRepositoryImpl
 import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
 import com.michaelrichards.movieloversapp.repositories.interfaces.MovieRepository
+import com.michaelrichards.movieloversapp.repositories.interfaces.UserMovieReviewsRepository
 import com.michaelrichards.movieloversapp.repositories.interfaces.UserRepository
 import com.michaelrichards.movieloversapp.utils.Constants
 import dagger.Module
@@ -49,6 +52,16 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideMovieReviewAPI(): MovieReviewAPI{
+        return Retrofit.Builder()
+            .baseUrl(Constants.SITE_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(Gson()))
+            .build()
+            .create(MovieReviewAPI::class.java)
+    }
+
+    @Singleton
+    @Provides
     fun provideUserDataAPI(): UserDataAPI {
         return Retrofit.Builder()
             .baseUrl(Constants.SITE_BASE_URL)
@@ -73,6 +86,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideMovieRepository(api: MovieAPI): MovieRepository = MovieRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideMovieReviewRepository(api: MovieReviewAPI, prefs: SharedPreferences): UserMovieReviewsRepository = UserMovieReviewsRepositoryImpl(api, prefs)
 
 
 }

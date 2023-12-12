@@ -13,8 +13,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,12 +46,11 @@ import com.michaelrichards.movieloversapp.ui.theme.backgroundColor
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistrationScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-   viewModel: RegistrationViewModel = hiltViewModel()
+    viewModel: RegistrationViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
@@ -223,7 +222,7 @@ fun RegistrationScreen(
                             tint = Color.White
                         )
                     },
-                    keyboardActions = KeyboardActions (onGo = {
+                    keyboardActions = KeyboardActions(onGo = {
                         viewModel.register(
                             firstName = firstName.value,
                             lastName = lastName.value,
@@ -237,9 +236,9 @@ fun RegistrationScreen(
                 Spacer(modifier = Modifier.height(13.dp))
 
             }
-            Column (
+            Column(
                 verticalArrangement = Arrangement.Bottom
-            ){
+            ) {
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -255,6 +254,16 @@ fun RegistrationScreen(
                         )
                     }) {
                     Text(text = stringResource(id = R.string.sign_up))
+                }
+
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp),
+                    onClick = {
+                        navController.popBackStack()
+                    }) {
+                    Text(text = stringResource(id = R.string.login))
                 }
             }
 

@@ -17,7 +17,11 @@ interface EnthusiastRepository : JpaRepository<Enthusiast, UUID> {
                 "e.username LIKE CONCAT('%',:query, '%')" +
                 "Or e.firstName LIKE CONCAT('%', :query, '%')" +
                 "Or e.lastName LIKE CONCAT('%', :query, '%')" +
-                "Or e.email LIKE CONCAT('%', :query, '%')"
+                "Or e.email LIKE CONCAT('%', :query, '%')" +
+                "AND e.id != :uuid"
     )
-    fun searchUsers(query: String): List<Enthusiast>
+    fun searchUsers(query: String, uuid: UUID): List<Enthusiast>
+
+
+
 }

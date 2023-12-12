@@ -19,7 +19,8 @@ interface FollowRepository : JpaRepository<Followers, Long> {
     fun findByFollowee(followee: Enthusiast): List<Followers>
 
     @Query("select f from Followers f where f.followee = ?1")
-    fun findByFolloweePageable(followee: Enthusiast, pageable: Pageable): List<Followers>
+    fun findByFolloweePageable(followee: Enthusiast, pageable: Pageable
+    ): List<Followers>
 
     @Query("select f from Followers f where f.follower = ?1")
     fun findByFollower(
@@ -30,7 +31,6 @@ interface FollowRepository : JpaRepository<Followers, Long> {
     fun findByFollowerPageable(
         follower: Enthusiast, pageable: Pageable
     ): List<Followers>
-
 
 
 }

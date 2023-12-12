@@ -1,24 +1,18 @@
 package com.michaelrichards.movieloversapp.screens.FollowingScreen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -29,22 +23,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.michaelrichards.movieloversapp.components.BottomBar
 import com.michaelrichards.movieloversapp.components.TopBar
-import com.michaelrichards.movieloversapp.dtos.UserDataDTO
+import com.michaelrichards.movieloversapp.components.UserSearchResults
+import com.michaelrichards.movieloversapp.dtos.UserProfileDTO
+import com.michaelrichards.movieloversapp.navigation.Screens
 import com.michaelrichards.movieloversapp.ui.theme.accentColor
-import com.michaelrichards.movieloversapp.ui.theme.backgroundColor
+import com.michaelrichards.movieloversapp.utils.ScrollScreenState
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+private const val TAG = "FollowingScreen"
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FollowingScreen(
     navController: NavController,
@@ -65,6 +62,7 @@ fun FollowingScreen(
     LaunchedEffect(pageState.currentPage, pageState.isScrollInProgress) {
         if (!pageState.isScrollInProgress) {
             selectedItemIndex = pageState.currentPage
+
         }
     }
 
@@ -87,8 +85,8 @@ fun FollowingScreen(
                         Tab(
                             selected = selectedItemIndex == index,
                             onClick = { selectedItemIndex = index },
-                            selectedContentColor = Color.DarkGray,
-                            unselectedContentColor = Color.LightGray
+                            selectedContentColor = Color.Black,
+                            unselectedContentColor = Color.White
                         ) {
                             Surface(
                                 modifier = Modifier
@@ -96,14 +94,13 @@ fun FollowingScreen(
                             ) {
                                 Row(
                                     modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(Color.Gray),
+                                        .fillMaxSize(),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
                                     Text(
                                         modifier = Modifier.padding(12.dp),
                                         text = item,
-                                        style = MaterialTheme.typography.bodyLarge
+                                        style = MaterialTheme.typography.bodyLarge.copy(color = accentColor, fontWeight = FontWeight.Bold),
                                     )
                                 }
 
@@ -114,18 +111,34 @@ fun FollowingScreen(
                 }
 
                 HorizontalPager(state = pageState) {
-                    Surface(modifier = Modifier.fillMaxSize(), color = backgroundColor) {
+                    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                         when (selectedItemIndex) {
-                            1 -> UserCardColumn(
-                                state = viewModel.followingState
-                            ) {
-                                viewModel.loadMoreFollowing()
+                            0 -> {
+                                LaunchedEffect(Unit) {
+                                    viewModel.resetFollowers()
+                                }
+                                UserCardColumn(
+                                    state = viewModel.followingState,
+                                    viewModel = viewModel,
+                                    navController = navController
+
+                                ) {
+                                    viewModel.loadMoreFollowing()
+                                }
                             }
 
-                            else -> UserCardColumn(
-                                state = viewModel.followersState
-                            ) {
-                                viewModel.loadMoreFollowers()
+
+                            else -> {
+                                LaunchedEffect(Unit) {
+                                    viewModel.resetFollowing()
+                                }
+                                UserCardColumn(
+                                    state = viewModel.followersState,
+                                    viewModel = viewModel,
+                                    navController = navController
+                                ) {
+                                    viewModel.loadMoreFollowers()
+                                }
                             }
                         }
                     }
@@ -142,44 +155,12 @@ fun FollowingScreen(
 
 
 @Composable
-fun UserCard(
-    userDataDTO: UserDataDTO
-) {
-    Surface {
-
-    }
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { },
-        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-        colors = CardDefaults.cardColors(containerColor = accentColor)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-        ) {
-
-            Text(
-                text = "${userDataDTO.firstName} ${userDataDTO.lastName}",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "@${userDataDTO.username}")
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = userDataDTO.email)
-
-        }
-    }
-}
-
-@Composable
-fun UserCardColumn(
-    state: ScreenState,
+private fun UserCardColumn(
+    state: ScrollScreenState<UserProfileDTO>,
+    viewModel: FollowingViewModel,
+    navController: NavController,
     atEndOfColumn: () -> Unit
+
 ) {
     LazyColumn(
         contentPadding = PaddingValues(5.dp)
@@ -188,8 +169,29 @@ fun UserCardColumn(
             if (i >= state.items.size - 1 && !state.endReached && !state.isLoading) {
                 atEndOfColumn()
             }
-            UserCard(state.items[i])
+
+            val following = remember {
+                mutableStateOf(state.items[i].amIFollowing)
+            }
+            Surface (
+                modifier = Modifier.clickable { navController.navigate("${Screens.UserDetailsScreen.route}/${state.items[i].username}") }
+            ){
+                UserSearchResults(
+                    userDataDTO = state.items[i],
+                    following = following
+                ) {
+                    if (following.value) {
+                        viewModel.unfollow(state.items[i].username)
+                    } else
+                        viewModel.follow(state.items[i].username)
+
+                    following.value = !following.value
+                }
+            }
+
         }
+
+
 
         item {
             if (state.isLoading) {

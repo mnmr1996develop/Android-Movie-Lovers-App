@@ -35,29 +35,30 @@ fun SplashScreen(
 ) {
 
 
-     val scale = remember {
-         Animatable(0f)
-     }
+    val scale = remember {
+        Animatable(0f)
+    }
     val context = LocalContext.current
-    LaunchedEffect(viewModel, context){
+    LaunchedEffect(viewModel, context) {
         scale.animateTo(
             targetValue = 0.9f,
             animationSpec = tween(
                 durationMillis = 800,
                 easing = { OvershootInterpolator(8f).getInterpolation(it) })
         )
-        viewModel.authResults.collect{res ->
-            when(res){
+        viewModel.authResults.collect { res ->
+            when (res) {
                 is AuthResult.Authorized -> {
-                    navController.navigate(Graphs.MainGraph.routeName){
-                        popUpTo(Graphs.StartGraph.routeName){
+                    navController.navigate(Graphs.MainGraph.routeName) {
+                        popUpTo(Graphs.StartGraph.routeName) {
                             inclusive = true
                         }
                     }
                 }
+
                 else -> {
-                    navController.navigate(Graphs.AuthGraph.routeName){
-                        popUpTo(Graphs.StartGraph.routeName){
+                    navController.navigate(Graphs.AuthGraph.routeName) {
+                        popUpTo(Graphs.StartGraph.routeName) {
                             inclusive = true
                         }
                     }
@@ -69,10 +70,12 @@ fun SplashScreen(
 
 
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.background)
-        .wrapContentSize(Alignment.Center))
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .wrapContentSize(Alignment.Center)
+    )
     {
         Box(
             modifier = Modifier
@@ -80,7 +83,7 @@ fun SplashScreen(
                 .scale(scale.value)
                 .clip(CircleShape)
                 .background(Color(0xFFdc8d2d))
-        ){
+        ) {
             Logo()
         }
     }

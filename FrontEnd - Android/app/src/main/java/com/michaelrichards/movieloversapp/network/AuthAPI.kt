@@ -16,7 +16,7 @@ interface AuthAPI {
     suspend fun login(@Body request: SignInRequest): JwtAuthenticationResponse
 
     @POST("auth/signup")
-    suspend fun register(@Body request: SignUpRequest) : JwtAuthenticationResponse
+    suspend fun register(@Body request: SignUpRequest): JwtAuthenticationResponse
 
     @POST("auth/logout")
     suspend fun logout(@Body jwtToken: String)

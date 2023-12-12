@@ -1,7 +1,6 @@
 package com.michaelrichards.movieloversapp.repositories.implementaions
 
 
-
 import android.content.SharedPreferences
 import android.util.Log
 import com.google.gson.Gson
@@ -15,7 +14,7 @@ import com.michaelrichards.movieloversapp.repositories.interfaces.AuthRepository
 import com.michaelrichards.movieloversapp.repositories.results.AuthResult
 import retrofit2.HttpException
 
-class AuthRepositoryImpl (
+class AuthRepositoryImpl(
     private val api: AuthAPI,
     private val prefs: SharedPreferences
 ) : AuthRepository {
@@ -28,41 +27,40 @@ class AuthRepositoryImpl (
                 .putString("jwt", "Bearer ${request.accessToken}")
                 .apply()
             AuthResult.Authorized()
-        }catch (e: HttpException){
-             if (e.code() == 400){
-                 AuthResult.UnAuthorized()
-             }else{
-                 AuthResult.UnknownError()
-             }
-        }catch (e: Exception){
+        } catch (e: HttpException) {
+            if (e.code() == 400) {
+                AuthResult.UnAuthorized()
+            } else {
                 AuthResult.UnknownError()
+            }
+        } catch (e: Exception) {
+            AuthResult.UnknownError()
         }
     }
 
 
     override suspend fun register(
         signUpRequest: SignUpRequest
-    ) : AuthResult<String> {
+    ): AuthResult<String> {
         return try {
             val request = api.register(request = signUpRequest)
             prefs.edit()
-                .putString("jwt",  "Bearer ${request.accessToken}")
+                .putString("jwt", "Bearer ${request.accessToken}")
                 .apply()
             AuthResult.Authorized()
-        }catch (e: HttpException){
-            if (e.code() == 401 || e.code() == 403){
+        } catch (e: HttpException) {
+            if (e.code() == 401 || e.code() == 403) {
                 AuthResult.UnAuthorized("UnAuthorized Access")
-            }
-            else if (e.code() == 400){
+            } else if (e.code() == 400) {
                 val gson = Gson()
                 val type = object : TypeToken<ErrorResponse>() {}.type
-                val errorResponse: ErrorResponse? = gson.fromJson(e.response()?.errorBody()!!.charStream(), type)
+                val errorResponse: ErrorResponse? =
+                    gson.fromJson(e.response()?.errorBody()!!.charStream(), type)
                 AuthResult.BadRequest(data = errorResponse?.message)
-            }
-            else{
+            } else {
                 AuthResult.UnknownError()
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             AuthResult.UnknownError()
         }
     }
@@ -70,21 +68,20 @@ class AuthRepositoryImpl (
     override suspend fun authenticate(): AuthResult<Unit> {
         return try {
             val token = prefs.getString("jwt", null)
-            if (token == null){
+            if (token == null) {
                 AuthResult.UnAuthorized()
-            }
-            else {
+            } else {
                 val jwtToken = JwtToken(token)
                 api.authenticate(jwtToken)
                 AuthResult.Authorized()
             }
-        }catch (e: HttpException){
-            if (e.code() == 401 || e.code() == 403){
+        } catch (e: HttpException) {
+            if (e.code() == 401 || e.code() == 403) {
                 AuthResult.UnAuthorized()
-            }else{
+            } else {
                 AuthResult.UnknownError()
             }
-        }catch (e: Exception){
+        } catch (e: Exception) {
             AuthResult.UnknownError()
         }
     }
@@ -100,7 +97,7 @@ class AuthRepositoryImpl (
                 prefs.edit().remove("jwt").apply()
                 AuthResult.UnAuthorized()
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             AuthResult.UnknownError()
         }
 

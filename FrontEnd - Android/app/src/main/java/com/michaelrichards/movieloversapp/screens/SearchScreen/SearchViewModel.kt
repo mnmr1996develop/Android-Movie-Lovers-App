@@ -2,7 +2,7 @@ package com.michaelrichards.movieloversapp.screens.SearchScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.michaelrichards.movieloversapp.dtos.SearchDataDTO
+import com.michaelrichards.movieloversapp.dtos.UserProfileDTO
 import com.michaelrichards.movieloversapp.model.Description
 import com.michaelrichards.movieloversapp.repositories.interfaces.MovieRepository
 import com.michaelrichards.movieloversapp.repositories.interfaces.UserRepository
@@ -20,11 +20,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "SearchViewModel"
+
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
     private val userRepository: UserRepository
-): ViewModel() {
+) : ViewModel() {
+
 
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
@@ -32,10 +34,10 @@ class SearchViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
-    private val _users = MutableStateFlow(listOf<SearchDataDTO>())
+    private val _users = MutableStateFlow(listOf<UserProfileDTO>())
     val users = searchText.debounce { 500L }
         .onEach { _isSearching.update { true } }
-        .combine(_users){ _ , users ->
+        .combine(_users) { _, users ->
             users
         }.onEach { _isSearching.update { false } }
         .stateIn(
@@ -45,58 +47,58 @@ class SearchViewModel @Inject constructor(
         )
 
 
-
     private val _movies = MutableStateFlow(listOf<Description>())
+
     @OptIn(FlowPreview::class)
     val movies = searchText
         .debounce(500L)
         .onEach { _isSearching.update { true } }
-        .combine(_movies){text , movies ->
-            if (text.isBlank()){
+        .combine(_movies) { text, movies ->
+            if (text.isBlank()) {
                 movies
-            }else{
+            } else {
                 movies
             }
         }
         .onEach { _isSearching.update { false } }
-            .stateIn(
+        .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             _movies.value
         )
 
-    fun searchMovie(searchString: String){
+    fun searchMovie(searchString: String) {
         viewModelScope.launch {
             if (searchString.isEmpty()) return@launch
             val moviesRes = movieRepository.searchMovieByName(searchString).getOrNull()
             if (moviesRes != null) {
-                _movies.update {moviesRes.description}
+                _movies.update { moviesRes.description }
             }
         }
     }
 
-    fun searchUser(searchString: String){
+    fun searchUser(searchString: String) {
         viewModelScope.launch {
             if (searchString.isEmpty()) return@launch
             val userRes = userRepository.searchUser(userName = searchString).getOrNull()
             if (userRes != null) {
-               _users.update { userRes }
+                _users.update { userRes }
             }
         }
     }
 
 
-    fun onSearchTextChange(text: String){
+    fun onSearchTextChange(text: String) {
         _searchText.value = text
     }
 
-    fun follow(username: String){
+    fun follow(username: String) {
         viewModelScope.launch {
             userRepository.follow(username)
         }
     }
 
-    fun unfollow(username: String){
+    fun unfollow(username: String) {
         viewModelScope.launch {
             userRepository.unfollow(username)
         }

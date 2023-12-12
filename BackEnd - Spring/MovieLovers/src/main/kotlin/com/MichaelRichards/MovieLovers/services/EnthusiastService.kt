@@ -1,6 +1,5 @@
 package com.MichaelRichards.MovieLovers.services
 
-import com.MichaelRichards.MovieLovers.dtos.BasicSearchUserDataDTO
 import com.MichaelRichards.MovieLovers.dtos.BasicUserDataDTO
 import com.MichaelRichards.MovieLovers.dtos.ProfileDataDTO
 import com.MichaelRichards.MovieLovers.exceptions.CustomExceptions
@@ -75,15 +74,18 @@ class EnthusiastService(
     fun getUserByBearerToken(bearerToken: String): Enthusiast =
         findByUsername(jwtService.extractUsername(bearerToken.substring(7)))
 
-    fun getBasicUserDataByBearerToken(bearerToken: String): BasicUserDataDTO {
+    fun getBasicUserDataByBearerToken(bearerToken: String): ProfileDataDTO {
         val jwt: String = bearerToken.substring(7)
         val user = findByUsername(jwtService.extractUsername(jwt))
-        return BasicUserDataDTO(
+        return ProfileDataDTO(
             firstName = user.firstName,
             lastName = user.lastName,
             email = user.email,
             username = user.username,
-            birthday = user.birthday
+            birthday = user.birthday,
+            followers = user.followers.size,
+            following = user.following.size,
+            totalReviews = user.movieReviews.size
         )
     }
 
@@ -117,19 +119,26 @@ class EnthusiastService(
         )
     }
 
-    fun searchUser(queryCaller: String, username: String): List<BasicSearchUserDataDTO> {
+    fun searchUser(queryCaller: String, username: String): List<ProfileDataDTO> {
 
         val me = getUserByBearerToken(queryCaller)
 
-        return enthusiastRepository.searchUsers(username).map { enthusiast ->
-                BasicSearchUserDataDTO(
+        return enthusiastRepository.searchUsers(username, me.id!!)
+            .filter { result ->
+                result.id != me.id
+            }
+            .map { enthusiast ->
+                ProfileDataDTO(
                     firstName = enthusiast.firstName,
                     lastName = enthusiast.lastName,
                     email = enthusiast.email,
                     username = enthusiast.username,
                     birthday = enthusiast.birthday,
-                    following = followRepository.existsByFollowerAndFollowee(me, enthusiast),
-                    follower = followRepository.existsByFollowerAndFollowee(enthusiast, me)
+                    amIFollowing = followRepository.existsByFollowerAndFollowee(me, enthusiast),
+                    followingUser = followRepository.existsByFollowerAndFollowee(enthusiast, me),
+                    followers = enthusiast.followers.size,
+                    following = enthusiast.following.size,
+                    totalReviews = enthusiast.movieReviews.size
                 )
             }
     }

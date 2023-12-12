@@ -26,7 +26,7 @@ class UserController(
 ) {
 
     @GetMapping
-    fun getUserDetails(@RequestHeader("Authorization") bearerToken: String): ResponseEntity<BasicUserDataDTO> {
+    fun getUserDetails(@RequestHeader("Authorization") bearerToken: String): ResponseEntity<ProfileDataDTO> {
         val enthusiast = enthusiastService.getBasicUserDataByBearerToken(bearerToken)
         return ResponseEntity.ok().body(enthusiast)
     }
@@ -37,7 +37,7 @@ class UserController(
     }
 
     @GetMapping("/search")
-    fun searchUser(@RequestHeader("Authorization") bearerToken: String, @RequestParam query: String): ResponseEntity<List<BasicSearchUserDataDTO>> =
+    fun searchUser(@RequestHeader("Authorization") bearerToken: String, @RequestParam query: String): ResponseEntity<List<ProfileDataDTO>> =
         ResponseEntity.ok().body(enthusiastService.searchUser(bearerToken, query))
 
     @GetMapping("/followers/full")
@@ -50,23 +50,22 @@ class UserController(
     fun getMyFollowersPaged(
         @RequestHeader("Authorization") bearerToken: String,
         @RequestParam pageNumber: Int
-    ): ResponseEntity<List<BasicUserDataDTO>> =
+    ): ResponseEntity<List<ProfileDataDTO>> =
         ResponseEntity.ok().body(followService.getMyFollowersPaged(bearerToken, pageNumber))
 
 
     @GetMapping("/following/full")
     fun getUserIFollowPaged(
         @RequestHeader("Authorization") bearerToken: String,
-        @RequestParam pageNumber: Int
-    ): ResponseEntity<List<BasicUserDataDTO>> =
-        ResponseEntity.ok().body(followService.getUserIFollowPaged(bearerToken, pageNumber))
+    ): ResponseEntity<List<ProfileDataDTO>> =
+        ResponseEntity.ok().body(followService.getUserIFollow(bearerToken) )
 
     @GetMapping("/following")
     fun getUserIFollow(
         @RequestHeader("Authorization") bearerToken: String,
         @RequestParam pageNumber: Int
-    ): ResponseEntity<List<BasicUserDataDTO>> =
-        ResponseEntity.ok().body(followService.getUserIFollow(bearerToken))
+    ): ResponseEntity<List<ProfileDataDTO>> =
+        ResponseEntity.ok().body(followService.getUserIFollowPaged(bearerToken, pageNumber))
 
 
     @PostMapping("/follow")

@@ -47,4 +47,8 @@ data class UserProfileDTO(
         result = 31 * result + totalReviews
         return result
     }
+
+    override fun toString(): String {
+        return "UserProfileDTO(firstName='$firstName', lastName='$lastName', email='$email', username='$username', birthday='$birthday', followers=$followers, following=$following, amIFollowing=$amIFollowing, followingUser=$followingUser, totalReviews=$totalReviews)"
+    }
 }

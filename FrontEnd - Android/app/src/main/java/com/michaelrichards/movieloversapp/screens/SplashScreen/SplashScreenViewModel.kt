@@ -13,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(
     private val repository: AuthRepository
-): ViewModel() {
+) : ViewModel() {
 
 
     private val resultChannel = Channel<AuthResult<Unit>>()

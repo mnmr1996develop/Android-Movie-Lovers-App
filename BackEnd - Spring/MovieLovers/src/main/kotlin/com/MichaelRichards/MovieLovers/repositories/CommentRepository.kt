@@ -14,5 +14,5 @@ interface CommentRepository : JpaRepository<Comment, Long> {
     fun findByEnthusiast(enthusiast: Enthusiast): List<Comment>
 
 
-    fun findByMovieReview(movieReview: MovieReview, pageable: Pageable): List<Comment>
+    fun findByMovieReview(movieReview: MovieReview): List<Comment>
 }

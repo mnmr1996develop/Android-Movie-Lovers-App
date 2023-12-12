@@ -59,7 +59,7 @@ class Enthusiast(
 
     @Column
     @JsonIgnore
-    @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "follower", fetch = FetchType.EAGER, orphanRemoval = true)
     val followers: MutableList<Followers> = mutableListOf()
 
 
